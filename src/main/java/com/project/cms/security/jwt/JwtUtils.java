@@ -49,10 +49,10 @@ public class JwtUtils {
         return null;
     }
 
-    public String generateJwtToken(String email, Set<Role> set) {
+    public String generateJwtToken(String email,Role set) {
 
         Claims claims = Jwts.claims().setSubject(email);
-        claims.put("roles", set);
+        claims.put("role", set);
         Date now = new Date();
         Date validity = new Date(now.getTime() + jwtExpirationMs);
         return Jwts.builder()

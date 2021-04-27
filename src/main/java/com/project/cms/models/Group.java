@@ -1,10 +1,16 @@
 package com.project.cms.models;
 
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import java.util.List;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class Group {
 
     private String course_id;
@@ -13,30 +19,4 @@ public class Group {
     @DBRef
     private List<User> students;
 
-    public Group() {
-    }
-
-    public String getCourse_id() {
-        return course_id;
-    }
-
-    public void setCourse_id(String course_id) {
-        this.course_id = course_id;
-    }
-
-    public int getGroupNo() {
-        return groupNo;
-    }
-
-    public void setGroupNo(int groupNo) {
-        this.groupNo = groupNo;
-    }
-
-    public int getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
-    }
 }

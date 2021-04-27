@@ -1,11 +1,9 @@
-package com.project.cms.service;
+package com.project.cms.models;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
-import com.project.cms.models.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,16 +13,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class UserDetailsImpl implements UserDetails {
 	private static final long serialVersionUID = 1L;
 
-	private String id;
+	private final String id;
 
-	private String username;
-
-	private String email;
+	private final String email;
 
 	@JsonIgnore
-	private String password;
+	private final String password;
 
-	private Collection<? extends GrantedAuthority> authorities;
+	private final Collection<? extends GrantedAuthority> authorities;
 
 	public UserDetailsImpl(String id, String email, String password,
 			Collection<? extends GrantedAuthority> authorities) {
@@ -35,15 +31,13 @@ public class UserDetailsImpl implements UserDetails {
 	}
 
 	public static UserDetailsImpl build(User user) {
-		List<GrantedAuthority> authorities = user.getRoles().stream()
-				.map(role -> new SimpleGrantedAuthority(role.getName().name()))
-				.collect(Collectors.toList());
+		GrantedAuthority authorities = new SimpleGrantedAuthority(user.getRole().getName().name());
 
 		return new UserDetailsImpl(
 				user.getId(),
 				user.getEmail(),
 				user.getPassword(),
-				authorities);
+				Collections.singleton(authorities));
 	}
 
 	@Override
@@ -66,7 +60,7 @@ public class UserDetailsImpl implements UserDetails {
 
 	@Override
 	public String getUsername() {
-		return username;
+		return email;
 	}
 
 	@Override

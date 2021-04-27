@@ -5,8 +5,7 @@ import com.project.cms.models.Role;
 import com.project.cms.models.Student;
 import com.project.cms.payload.request.LoginRequest;
 import com.project.cms.payload.request.StudentSignup;
-import com.project.cms.repository.RoleRepository;
-import com.project.cms.repository.UserRepository;
+import com.project.cms.repository.*;
 import com.project.cms.security.jwt.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,15 +20,23 @@ import java.util.*;
 public class UserService implements IUserService {
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
+    private final StudentRepository studentRepository;
+    private final InstructorRepository instructorRepository;
+    private final ManagerRepository managerRepository;
+    private final AdminRepository adminRepository;
     private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder encoder;
     private final JwtUtils jwtUtils;
     private final IFilesStorageService IFilesStorageService;
 
     @Autowired
-    public UserService(AuthenticationManager authenticationManager, UserRepository userRepository, RoleRepository roleRepository, BCryptPasswordEncoder encoder, JwtUtils jwtUtils, IFilesStorageService IFilesStorageService) {
+    public UserService(AuthenticationManager authenticationManager, UserRepository userRepository, StudentRepository studentRepository, InstructorRepository instructorRepository, ManagerRepository managerRepository, AdminRepository adminRepository, RoleRepository roleRepository, BCryptPasswordEncoder encoder, JwtUtils jwtUtils, com.project.cms.service.IFilesStorageService IFilesStorageService) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
+        this.studentRepository = studentRepository;
+        this.instructorRepository = instructorRepository;
+        this.managerRepository = managerRepository;
+        this.adminRepository = adminRepository;
         this.roleRepository = roleRepository;
         this.encoder = encoder;
         this.jwtUtils = jwtUtils;
@@ -45,20 +52,18 @@ public class UserService implements IUserService {
         if (studentSignup.getCv().isEmpty())
             throw new Exception("CV is Empty");
         Student student = new Student();
-        student.setfName(studentSignup.getFname());
-        student.setlName(studentSignup.getLname());
+        student.setFName(studentSignup.getFname());
+        student.setLName(studentSignup.getLname());
         student.setPhone(studentSignup.getPhone());
         student.setEmail(studentSignup.getEmail());
         student.setPassword(encoder.encode(studentSignup.getPassword()));
         student.setUniversity(studentSignup.getUniversity());
         student.setYear(studentSignup.getYear());
-        String fileName = UUID.randomUUID().toString() + ".docx";
+        String fileName = UUID.randomUUID().toString() + ".pdf";
         IFilesStorageService.save(studentSignup.getCv(), fileName);
         student.setCv(fileName);
-        Set<Role> roles = new HashSet<>();
         Role userRole = roleRepository.findByName(ERole.ROLE_USER).orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-        roles.add(userRole);
-        student.setRoles(roles);
+        student.setRole(userRole);
         student = userRepository.save(student);
         return student;
 
@@ -69,7 +74,7 @@ public class UserService implements IUserService {
         try {
             String username = loginRequest.getEmail();
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, loginRequest.getPassword()));
-            String token = jwtUtils.generateJwtToken(username, this.userRepository.findByEmail(username).getRoles());
+            String token = jwtUtils.generateJwtToken(username, this.userRepository.findByEmail(username).getRole());
             Map<Object, Object> model = new HashMap<>();
             model.put("email", username);
             model.put("token", token);

@@ -8,13 +8,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Getter
 @Setter
 @NoArgsConstructor
-@Document(collection = "students")
-public class Student extends User {
+@Document(collection = "managers")
+public class Manager extends User{
     private String fName;
     private String lName;
+    private String title;
     private String phone;
-    private String university;
-    private int year;
-    private String cv;
-
 }
