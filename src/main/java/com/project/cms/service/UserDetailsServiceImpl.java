@@ -2,6 +2,7 @@ package com.project.cms.service;
 
 import com.project.cms.models.*;
 import com.project.cms.repository.AdminRepository;
+import com.project.cms.repository.InstructorRepository;
 import com.project.cms.repository.ManagerRepository;
 import com.project.cms.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +17,28 @@ import java.util.*;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
-    @Autowired
     private AdminRepository adminRepository;
-    @Autowired
     private StudentRepository studentRepository;
-    @Autowired
     private ManagerRepository managerRepository;
+    private InstructorRepository instructorRepository;
+
+    @Autowired
+    public void setAdminRepository(AdminRepository adminRepository) {
+        this.adminRepository = adminRepository;
+    }
+    @Autowired
+    public void setStudentRepository(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
+    }
+    @Autowired
+    public void setManagerRepository(ManagerRepository managerRepository) {
+        this.managerRepository = managerRepository;
+    }
+    @Autowired
+    public void setInstructorRepository(InstructorRepository instructorRepository) {
+        this.instructorRepository = instructorRepository;
+    }
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
@@ -51,9 +68,18 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                     user.setPassword(student.get().getPassword());
                     user.setRole(student.get().getRole());
                 }
+                else
+                {
+                    Optional<Instructor> instructor= Optional.ofNullable(instructorRepository.findByEmail(email));
+                    if (instructor.isPresent())
+                    {
+                        user.setEmail(instructor.get().getEmail());
+                        user.setPassword(instructor.get().getPassword());
+                        user.setRole(instructor.get().getRole());
+                    }
+                }
 
             }
-
         }
         GrantedAuthority authorities = getUserAuthority(user.getRole());
         return buildUserForAuthentication(user, authorities);

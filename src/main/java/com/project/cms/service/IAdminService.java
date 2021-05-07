@@ -7,7 +7,7 @@ import com.project.cms.payload.request.ManagerRegister;
 
 public interface IAdminService {
     Manager registerManager(ManagerRegister managerRegister);
-    Instructor registerInstructor(InstructorRegister instructorRegister);
+    Instructor registerInstructor(InstructorRegister instructor);
     boolean activateManagerAccount(String id);
     boolean activateInstructorAccount(String id);
     boolean deactivateManagerAccount(String id);

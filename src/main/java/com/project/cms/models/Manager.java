@@ -12,6 +12,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Manager extends User{
     private String fName;
     private String lName;
-    private String title;
     private String phone;
+
 }
