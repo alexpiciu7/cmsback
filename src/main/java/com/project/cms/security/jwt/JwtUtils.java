@@ -19,10 +19,10 @@ import java.util.Set;
 @Component
 public class JwtUtils {
 
-    @Value("${bezkoder.app.jwtSecret}")
+    @Value("${cms.app.jwtSecret}")
     private String jwtSecret;
 
-    @Value("${bezkoder.app.jwtExpirationMs}")
+    @Value("${cms.app.jwtExpirationMs}")
     private int jwtExpirationMs;
     @Autowired
     private UserDetailsServiceImpl userDetailsService;

@@ -3,7 +3,11 @@ package com.project.cms.models;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -14,4 +18,6 @@ public class Instructor extends User {
     private String lName;
     private String title;
     private String phone;
+    @DBRef
+    private Set<Course> courses=new HashSet<>();
 }

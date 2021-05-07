@@ -6,7 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -17,6 +19,6 @@ public class Group {
     private int groupNo;
     private int capacity;
     @DBRef
-    private List<User> students;
+    private Set<Student> students=new HashSet<>();
 
 }

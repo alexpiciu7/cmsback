@@ -11,7 +11,7 @@ import javax.validation.constraints.Positive;
 @Getter
 @Setter
 @NoArgsConstructor
-public class StudentSignup extends SignupRequest {
+public class StudentRegister extends SignupRequest {
     @NotBlank
     private String university;
     @Positive

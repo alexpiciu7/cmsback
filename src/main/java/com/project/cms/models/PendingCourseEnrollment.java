@@ -7,10 +7,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CourseEnrollment {
+public class PendingCourseEnrollment {
     private String courseId;
     private String studentId;
-    private boolean isAccepted;
-
 
 }

@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -15,7 +14,6 @@ import javax.validation.constraints.Size;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "users")
 public class User {
     @Id
     private String id;
@@ -30,7 +28,7 @@ public class User {
 
     @DBRef
     private Role role;
-
+    private boolean isActive=true;
 
     public User(String email, String password) {
         this.email = email;
