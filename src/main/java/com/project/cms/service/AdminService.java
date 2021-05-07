@@ -9,6 +9,7 @@ import com.project.cms.payload.request.ManagerRegister;
 import com.project.cms.repository.*;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -20,15 +21,17 @@ public class AdminService implements IAdminService {
     private final ManagerRepository managerRepository;
     private final InstructorRepository instructorRepository;
     private final RoleRepository roleRepository;
+    private final BCryptPasswordEncoder encoder;
     private final Mapper mapper;
 
     @Autowired
-    public AdminService(StudentRepository studentRepository, ManagerRepository managerRepository, InstructorRepository instructorRepository, RoleRepository roleRepository, Mapper mapper) {
+    public AdminService(StudentRepository studentRepository, ManagerRepository managerRepository, InstructorRepository instructorRepository, RoleRepository roleRepository, BCryptPasswordEncoder encoder, Mapper mapper) {
 
         this.studentRepository = studentRepository;
         this.managerRepository = managerRepository;
         this.instructorRepository = instructorRepository;
         this.roleRepository = roleRepository;
+        this.encoder = encoder;
         this.mapper = mapper;
     }
 
@@ -36,6 +39,7 @@ public class AdminService implements IAdminService {
     @Override
     public Manager registerManager(ManagerRegister managerRegister) {
         Manager manager = mapper.map(managerRegister, Manager.class);
+        manager.setPassword(encoder.encode(manager.getPassword()));
         manager.setRole(roleRepository.findByName(ERole.ROLE_MANAGER).get());
         manager = managerRepository.save(manager);
         return manager;
@@ -44,6 +48,7 @@ public class AdminService implements IAdminService {
     @Override
     public Instructor registerInstructor(InstructorRegister instructorRegister) {
         Instructor instructor = mapper.map(instructorRegister, Instructor.class);
+        instructor.setPassword(encoder.encode(instructor.getPassword()));
         instructor.setRole(roleRepository.findByName(ERole.ROLE_INSTRUCTOR).get());
         instructor = instructorRepository.save(instructor);
         return instructor;
