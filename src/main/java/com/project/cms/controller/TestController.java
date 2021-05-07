@@ -1,4 +1,4 @@
-package com.project.cms.controllers;
+package com.project.cms.controller;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;

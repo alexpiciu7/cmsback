@@ -1,6 +1,6 @@
 package com.project.cms.service;
 
-import com.project.cms.models.Student;
+import com.project.cms.model.Student;
 import com.project.cms.payload.request.StudentRegister;
 
 import java.util.List;

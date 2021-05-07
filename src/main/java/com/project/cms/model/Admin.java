@@ -1,4 +1,4 @@
-package com.project.cms.models;
+package com.project.cms.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,10 +8,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Getter
 @Setter
 @NoArgsConstructor
-@Document(collection = "managers")
-public class Manager extends User{
+@Document(collection = "admins")
+public class Admin extends User {
     private String fName;
     private String lName;
     private String phone;
-
 }

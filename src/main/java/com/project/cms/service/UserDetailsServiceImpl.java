@@ -1,6 +1,6 @@
 package com.project.cms.service;
 
-import com.project.cms.models.*;
+import com.project.cms.model.*;
 import com.project.cms.repository.AdminRepository;
 import com.project.cms.repository.InstructorRepository;
 import com.project.cms.repository.ManagerRepository;

@@ -1,6 +1,6 @@
 package com.project.cms.service;
 
-import com.project.cms.models.ERole;
+import com.project.cms.model.ERole;
 import com.project.cms.payload.request.LoginRequest;
 import com.project.cms.repository.RoleRepository;
 import com.project.cms.security.jwt.JwtUtils;
@@ -32,7 +32,6 @@ public class AuthService implements IAuthService {
         this.jwtUtils = jwtUtils;
     }
 
-
     @Override
     public Map<Object, Object> login(LoginRequest loginRequest) {
         try {
@@ -47,4 +46,6 @@ public class AuthService implements IAuthService {
             throw new BadCredentialsException("Invalid email/password supplied");
         }
     }
+
+
 }

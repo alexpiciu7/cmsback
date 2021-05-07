@@ -1,4 +1,4 @@
-package com.project.cms.controllers;
+package com.project.cms.controller;
 
 import com.project.cms.payload.request.LoginRequest;
 import com.project.cms.payload.response.MessageResponse;

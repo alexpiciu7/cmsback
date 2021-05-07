@@ -1,4 +1,4 @@
-package com.project.cms.models;
+package com.project.cms.model;
 
 
 import lombok.Getter;
@@ -7,7 +7,6 @@ import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Getter

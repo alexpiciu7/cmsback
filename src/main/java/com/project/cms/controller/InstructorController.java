@@ -1,4 +1,4 @@
-package com.project.cms.controllers;
+package com.project.cms.controller;
 
 public class InstructorController {
 }

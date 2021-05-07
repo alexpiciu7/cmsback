@@ -1,8 +1,8 @@
 package com.project.cms.service;
 
-import com.project.cms.models.ERole;
-import com.project.cms.models.Role;
-import com.project.cms.models.Student;
+import com.project.cms.model.ERole;
+import com.project.cms.model.Role;
+import com.project.cms.model.Student;
 import com.project.cms.payload.request.StudentRegister;
 import com.project.cms.repository.RoleRepository;
 import com.project.cms.repository.StudentRepository;

@@ -1,7 +1,6 @@
 package com.project.cms.repository;
 
-import com.project.cms.models.Admin;
-import com.project.cms.models.User;
+import com.project.cms.model.Admin;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
