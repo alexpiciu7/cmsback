@@ -9,6 +9,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class PendingCourseEnrollment {
     private String courseId;
-    private String studentId;
+    private String studentEmail;
 
 }

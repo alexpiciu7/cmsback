@@ -1,5 +1,6 @@
 package com.project.cms.service;
 
+import com.project.cms.model.PendingCourseEnrollment;
 import com.project.cms.model.Student;
 import com.project.cms.payload.request.StudentRegister;
 
@@ -11,5 +12,6 @@ public interface IStudentService {
     Student save(Student student);
     Optional<Student> findOne(String id);
     List<Student> findAll();
+    PendingCourseEnrollment enroll(PendingCourseEnrollment courseEnrollment);
 
 }
