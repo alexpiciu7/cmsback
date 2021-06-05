@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class StudentService implements IStudentService{
@@ -50,7 +49,7 @@ public class StudentService implements IStudentService{
         student.setUniversity(studentRegister.getUniversity());
         student.setYear(studentRegister.getYear());
         String fileName = student.getEmail() + ".pdf";
-        filesStorageService.save(studentRegister.getCv(), fileName);
+        filesStorageService.saveCv(studentRegister.getCv(), fileName);
         student.setCv(fileName);
         Role userRole = roleRepository.findByName(ERole.ROLE_STUDENT).orElseThrow(() -> new RuntimeException("Error: Role is not found."));
         student.setRole(userRole);

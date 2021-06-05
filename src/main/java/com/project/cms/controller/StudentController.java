@@ -8,7 +8,6 @@ import com.project.cms.payload.request.StudentRegister;
 import com.project.cms.service.ICourseService;
 import com.project.cms.service.IFilesStorageService;
 import com.project.cms.service.IStudentService;
-import com.project.cms.service.StudentService;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -76,6 +75,24 @@ public class StudentController {
         else return  ResponseEntity.badRequest().body("You must be logged!");
     }
 
+    @GetMapping("/courses/{id}/timetable")
+    public ResponseEntity<?> timetable(@PathVariable String id)
+    {
+        Optional<Course> course=courseService.findOne(id);
+        if(course.isEmpty())
+            return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(filesStorageService.loadTimetable(course.get().getTimetable())+".pdf");
+    }
+
+    @GetMapping("/courses/{id}/post")
+    public ResponseEntity<?> post(@PathVariable String id)
+    {
+        Optional<Course> course=courseService.findOne(id);
+        if(course.isEmpty())
+            return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(course.get().getPost());
+    }
+
     @PutMapping("/{id}/update/cv")
     public ResponseEntity<?> updateCv(@PathVariable String id, @RequestBody MultipartFile cv){
         Optional<Student> student= studentService.findOne(id);
@@ -83,16 +100,7 @@ public class StudentController {
             return ResponseEntity.notFound().build();
         if(cv==null)
             return ResponseEntity.badRequest().build();
-        filesStorageService.save(cv, student.get().getEmail() + ".pdf");
-        return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/courses/{id}/timetable")
-    public ResponseEntity<?> timetable(@PathVariable String id)
-    {
-        Optional<Course> course=courseService.findOne(id);
-        if(course.isEmpty())
-            return ResponseEntity.notFound().build();
+        filesStorageService.saveCv(cv, student.get().getEmail() + ".pdf");
         return ResponseEntity.ok().build();
     }
 
