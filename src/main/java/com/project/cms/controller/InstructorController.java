@@ -1,12 +1,11 @@
 package com.project.cms.controller;
 
 import com.project.cms.model.Course;
+import com.project.cms.model.Instructor;
+import com.project.cms.model.Note;
 import com.project.cms.model.Student;
 import com.project.cms.payload.request.CourseRegister;
-import com.project.cms.service.CourseService;
-import com.project.cms.service.FilesStorageService;
-import com.project.cms.service.InstructorService;
-import com.project.cms.service.StudentService;
+import com.project.cms.service.*;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,14 +23,16 @@ public class InstructorController {
     private final CourseService courseService;
     private final InstructorService instructorService;
     private final StudentService studentService;
+    private final NoteService noteService;
     private final FilesStorageService filesStorageService;
     private final Mapper mapper;
 
     @Autowired
-    public InstructorController(CourseService courseService, InstructorService instructorService, StudentService studentService, FilesStorageService filesStorageService, Mapper mapper) {
+    public InstructorController(CourseService courseService, InstructorService instructorService, StudentService studentService, NoteService noteService, FilesStorageService filesStorageService, Mapper mapper) {
         this.courseService = courseService;
         this.instructorService = instructorService;
         this.studentService = studentService;
+        this.noteService = noteService;
         this.filesStorageService = filesStorageService;
         this.mapper = mapper;
     }
@@ -109,7 +110,24 @@ public class InstructorController {
             return ResponseEntity.notFound().build();
         course.get().addPost(post);
         return ResponseEntity.ok(courseService.save(course.get()));
-
+    }
+    @PutMapping("/{idInstructor}/course/{idCourse}/student/{idStudent}/note")
+    public ResponseEntity<?> note(@PathVariable String idInstructor,@PathVariable String idCourse,@PathVariable String idStudent,@RequestBody String note){
+        Optional<Instructor> instructor= instructorService.findOne(idInstructor);
+        if(instructor.isEmpty())
+            return ResponseEntity.notFound().build();
+        Optional<Course> course= courseService.findOne(idCourse);
+        if(course.isEmpty())
+            return ResponseEntity.notFound().build();
+        Optional<Student> student= studentService.findOne(idStudent);
+        if(student.isEmpty())
+            return ResponseEntity.notFound().build();
+        Note note1= new Note();
+        note1.setInstructorId(idInstructor);
+        note1.setCourseId(idCourse);
+        note1.setStudentEmail(student.get().getEmail());
+        note1.setNote(note);
+        return ResponseEntity.ok(noteService.save(note1));
     }
 
 
