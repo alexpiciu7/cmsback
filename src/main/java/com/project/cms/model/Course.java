@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -40,6 +41,8 @@ public class Course {
     private String address;
     @Positive
     private int capacity;
+    private String timetable;
+    private List<String> post=new ArrayList<>();
     @DBRef
     private Set<Student> students=new HashSet<>();
     private boolean isActive;
@@ -51,5 +54,6 @@ public class Course {
     {
         this.students.remove(student);
     }
+    public void addPost(String post) { this.post.add(post); }
 
 }

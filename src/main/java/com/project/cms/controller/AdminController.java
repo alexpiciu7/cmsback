@@ -114,22 +114,22 @@ public class AdminController {
             return new ResponseEntity<>(HttpStatus.valueOf(e.getExceptionId()));
         }
     }
-    @Autowired
-    BCryptPasswordEncoder encoder;
-    @Autowired
-    RoleRepository roleRepository;
-    @Autowired
-    AdminRepository adminRepository;
-    @PostMapping("/add/admin")
-    public void add(){
-        Admin admin=new Admin();
-        admin.setFName("Admin");
-        admin.setLName("Admin");
-        admin.setPhone("0712345678");
-        admin.setEmail("admin@admin.com");
-        admin.setPassword(encoder.encode("admin1234"));
-        admin.setRole(roleRepository.findByName(ERole.ROLE_ADMIN).get());
-        adminRepository.save(admin);
- }
+//    @Autowired
+//    BCryptPasswordEncoder encoder;
+//    @Autowired
+//    RoleRepository roleRepository;
+//    @Autowired
+//    AdminRepository adminRepository;
+//    @PostMapping("/add/admin")
+//    public void add(){
+//        Admin admin=new Admin();
+//        admin.setFName("Admin");
+//        admin.setLName("Admin");
+//        admin.setPhone("0712345678");
+//        admin.setEmail("admin@admin.com");
+//        admin.setPassword(encoder.encode("admin1234"));
+//        admin.setRole(roleRepository.findByName(ERole.ROLE_ADMIN).get());
+//        adminRepository.save(admin);
+// }
 
 }

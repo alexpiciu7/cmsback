@@ -1,18 +1,14 @@
 package com.project.cms.payload.request;
 
 import com.project.cms.model.Duration;
-import com.project.cms.model.Student;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+
 @Getter
 @Setter
 public class CourseRegister {

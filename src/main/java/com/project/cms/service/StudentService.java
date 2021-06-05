@@ -49,7 +49,7 @@ public class StudentService implements IStudentService{
         student.setPassword(encoder.encode(studentRegister.getPassword()));
         student.setUniversity(studentRegister.getUniversity());
         student.setYear(studentRegister.getYear());
-        String fileName = UUID.randomUUID()+ ".pdf";
+        String fileName = student.getEmail() + ".pdf";
         filesStorageService.save(studentRegister.getCv(), fileName);
         student.setCv(fileName);
         Role userRole = roleRepository.findByName(ERole.ROLE_STUDENT).orElseThrow(() -> new RuntimeException("Error: Role is not found."));

@@ -8,8 +8,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class Note {
-    private String lecturerId;
-    private String studentId;
+    private String instructorId;
+    private String studentEmail;
     private String courseId;
     private String note;
 
