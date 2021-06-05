@@ -3,9 +3,11 @@ package com.project.cms.service;
 import com.project.cms.model.Note;
 import com.project.cms.repository.NoteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class NoteService implements INoteService{
     @Autowired
     private final NoteRepository noteRepository;

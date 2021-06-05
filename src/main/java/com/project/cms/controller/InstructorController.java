@@ -1,10 +1,8 @@
 package com.project.cms.controller;
 
-import com.project.cms.model.Course;
-import com.project.cms.model.Instructor;
-import com.project.cms.model.Note;
-import com.project.cms.model.Student;
+import com.project.cms.model.*;
 import com.project.cms.payload.request.CourseRegister;
+import com.project.cms.payload.request.GroupRequest;
 import com.project.cms.service.*;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,6 +126,14 @@ public class InstructorController {
         note1.setStudentEmail(student.get().getEmail());
         note1.setNote(note);
         return ResponseEntity.ok(noteService.save(note1));
+    }
+    @PutMapping("/course/{id}/add/group")
+    public ResponseEntity<?> addGroup(@PathVariable String id, @RequestBody GroupRequest group){
+        Optional<Course> course= courseService.findOne(id);
+        if(course.isEmpty())
+            return ResponseEntity.notFound().build();
+        course.get().addGroup(mapper.map(group,Group.class));
+        return ResponseEntity.ok().build();
     }
 
 

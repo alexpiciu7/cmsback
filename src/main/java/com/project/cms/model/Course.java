@@ -45,6 +45,8 @@ public class Course {
     private List<String> post=new ArrayList<>();
     @DBRef
     private Set<Student> students=new HashSet<>();
+    @DBRef
+    private Set<Group> groups=new HashSet<>();
     private boolean isActive;
     public void addStudent(Student student)
     {
@@ -55,5 +57,6 @@ public class Course {
         this.students.remove(student);
     }
     public void addPost(String post) { this.post.add(post); }
+    public void addGroup(Group group) { this.groups.add(group); }
 
 }
