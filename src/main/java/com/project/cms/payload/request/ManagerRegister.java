@@ -1,8 +1,15 @@
 package com.project.cms.payload.request;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+@Setter
+@Getter
+@NoArgsConstructor
 public class ManagerRegister {
     @NotBlank
     @Size(max = 50)

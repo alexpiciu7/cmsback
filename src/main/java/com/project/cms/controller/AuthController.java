@@ -36,6 +36,6 @@ public class AuthController {
     public ResponseEntity<?> logoutUser() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         securityContext.setAuthentication(null);
-        return ok(new MessageResponse("logout successful"));
+        return ok(new MessageResponse("Logout successful"));
     }
 }

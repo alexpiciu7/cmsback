@@ -27,18 +27,24 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/student")
 public class StudentController {
+
+    private final IStudentService studentService;
+    private final ICourseService courseService;
+    private final IFilesStorageService filesStorageService;
+    private final Mapper mapper;
+    private final GroupRepository groupRepository;
+
+
     @Autowired
-    private IStudentService studentService;
-    @Autowired
-    private ICourseService courseService;
-    @Autowired
-    private IFilesStorageService filesStorageService;
-    @Autowired
-    private Mapper mapper;
-    @Autowired
-    private GroupRepository groupRepository;
-    @Autowired
-    private PendingGroupEnrollmentRepository pendingGroupEnrollmentRepository;
+    public StudentController(IStudentService studentService, ICourseService courseService, IFilesStorageService filesStorageService, Mapper mapper, GroupRepository groupRepository, PendingGroupEnrollmentRepository pendingGroupEnrollmentRepository) {
+        this.studentService = studentService;
+        this.courseService = courseService;
+        this.filesStorageService = filesStorageService;
+        this.mapper = mapper;
+        this.groupRepository = groupRepository;
+
+    }
+
     @Transactional
     @RequestMapping(value = "/register", method = RequestMethod.POST, consumes = {"multipart/form-data"}, produces =
             "application/json")
@@ -51,12 +57,12 @@ public class StudentController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-    @GetMapping("/courses")
+    @GetMapping("/course/all")
     public ResponseEntity<?> getAllCourses(){
         return ResponseEntity.ok(courseService.getAll().stream().map(x->mapper.map(x,CourseRegister.class)));
     }
 
-    @GetMapping("/courses/{id}")
+    @GetMapping("/course/{id}")
     public ResponseEntity<?> getDetailsCourse(@PathVariable String id){
         Optional<Course> course= courseService.findOne(id);
         if(course.isEmpty())
@@ -64,7 +70,7 @@ public class StudentController {
         return ResponseEntity.ok(mapper.map(course.get(), CourseRegister.class));
     }
 
-    @PostMapping("/courses/{id}/enroll")
+    @PostMapping("/course/{id}/enroll")
     public ResponseEntity<?> enrollCourse(@PathVariable String id){
         Optional<Course> course=courseService.findOne(id);
         if(course.isEmpty())
@@ -82,7 +88,7 @@ public class StudentController {
         else return  ResponseEntity.badRequest().body("You must be logged!");
     }
 
-    @PostMapping("/courses/{idCourse}/group/{groupNo}/enroll")
+    @PostMapping("/course/{idCourse}/group/{groupNo}/enroll")
     public ResponseEntity<?> enrollGroup(@PathVariable String idCourse, @PathVariable String groupNo){
         Optional<Course> course=courseService.findOne(idCourse);
         Optional<Group> group=groupRepository.findByGroupNo(groupNo);
@@ -98,7 +104,7 @@ public class StudentController {
         else return  ResponseEntity.badRequest().body("You must be logged!");
     }
 
-    @GetMapping("/courses/{id}/timetable")
+    @GetMapping("/course/{id}/timetable")
     public ResponseEntity<?> timetable(@PathVariable String id)
     {
         Optional<Course> course=courseService.findOne(id);
@@ -107,7 +113,7 @@ public class StudentController {
         return ResponseEntity.ok(filesStorageService.loadTimetable(course.get().getTimetable())+".pdf");
     }
 
-    @GetMapping("/courses/{id}/post")
+    @GetMapping("/course/{id}/post")
     public ResponseEntity<?> post(@PathVariable String id)
     {
         Optional<Course> course=courseService.findOne(id);

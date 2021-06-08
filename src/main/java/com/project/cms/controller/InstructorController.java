@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,6 +30,7 @@ public class InstructorController {
     private final Mapper mapper;
     private final PendingCourseEnrollmentRepository pendingCourseEnrollmentRepository;
     private final PendingGroupEnrollmentRepository pendingGroupEnrollmentRepository;
+
     @Autowired
     public InstructorController(CourseService courseService, InstructorService instructorService, StudentService studentService, NoteService noteService, FilesStorageService filesStorageService, Mapper mapper, PendingCourseEnrollmentRepository pendingCourseEnrollmentRepository, PendingGroupEnrollmentRepository pendingGroupEnrollmentRepository) {
         this.courseService = courseService;
@@ -178,7 +178,7 @@ public class InstructorController {
             return ResponseEntity.notFound().build();
         if (!course.get().getStudents().contains(student.get()))
             return ResponseEntity.badRequest().build();
-        Optional<Group> group1 = courseService.findByCourseIdAndGroupNo(idCourse,groupNo);
+        Optional<Group> group1 = courseService.findByCourseIdAndGroupNo(idCourse, groupNo);
         if (group1.isEmpty())
             return ResponseEntity.notFound().build();
         if (group1.get().getCapacity() - group1.get().getStudents().size() - 1 > 0) {

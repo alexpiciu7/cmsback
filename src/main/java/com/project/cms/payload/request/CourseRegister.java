@@ -2,6 +2,7 @@ package com.project.cms.payload.request;
 
 import com.project.cms.model.Duration;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class CourseRegister {
     private String id;
     @NotBlank
