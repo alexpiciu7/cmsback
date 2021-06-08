@@ -1,11 +1,9 @@
 package com.project.cms.service;
 
-import com.project.cms.model.ERole;
-import com.project.cms.model.PendingCourseEnrollment;
-import com.project.cms.model.Role;
-import com.project.cms.model.Student;
+import com.project.cms.model.*;
 import com.project.cms.payload.request.StudentRegister;
 import com.project.cms.repository.PendingCourseEnrollmentRepository;
+import com.project.cms.repository.PendingGroupEnrollmentRepository;
 import com.project.cms.repository.RoleRepository;
 import com.project.cms.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +21,16 @@ public class StudentService implements IStudentService{
     private final RoleRepository roleRepository;
     private final IFilesStorageService filesStorageService;
     private final PendingCourseEnrollmentRepository pendingCourseEnrollmentRepository;
+    private final PendingGroupEnrollmentRepository pendingGroupEnrollmentRepository;
 
     @Autowired
-    public StudentService(StudentRepository studentRepository, BCryptPasswordEncoder encoder, RoleRepository roleRepository, IFilesStorageService iFilesStorageService, PendingCourseEnrollmentRepository pendingCourseEnrollmentRepository) {
+    public StudentService(StudentRepository studentRepository, BCryptPasswordEncoder encoder, RoleRepository roleRepository, IFilesStorageService iFilesStorageService, PendingCourseEnrollmentRepository pendingCourseEnrollmentRepository, PendingGroupEnrollmentRepository pendingGroupEnrollmentRepository) {
         this.studentRepository = studentRepository;
         this.encoder = encoder;
         this.roleRepository = roleRepository;
         this.filesStorageService = iFilesStorageService;
         this.pendingCourseEnrollmentRepository = pendingCourseEnrollmentRepository;
+        this.pendingGroupEnrollmentRepository = pendingGroupEnrollmentRepository;
     }
 
     @Override
@@ -64,7 +64,10 @@ public class StudentService implements IStudentService{
 
     @Override
     public Optional<Student> findOne(String id) {
-        return studentRepository.findById(id);
+        if (studentRepository.findByEmail(id)==null)
+            return Optional.empty();
+        else
+            return Optional.of(studentRepository.findByEmail(id));
     }
 
     @Override
@@ -73,7 +76,12 @@ public class StudentService implements IStudentService{
     }
 
     @Override
-    public PendingCourseEnrollment enroll(PendingCourseEnrollment courseEnrollment) {
+    public PendingCourseEnrollment enrollCourse(PendingCourseEnrollment courseEnrollment) {
         return pendingCourseEnrollmentRepository.save(courseEnrollment);
+    }
+
+    @Override
+    public PendingGroupEnrollment enrollGroup(PendingGroupEnrollment groupEnrollment) {
+        return pendingGroupEnrollmentRepository.save(groupEnrollment);
     }
 }

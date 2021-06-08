@@ -3,12 +3,17 @@ package com.project.cms.controller;
 import com.project.cms.model.*;
 import com.project.cms.payload.request.CourseRegister;
 import com.project.cms.payload.request.GroupRequest;
+import com.project.cms.repository.PendingCourseEnrollmentRepository;
+import com.project.cms.repository.PendingGroupEnrollmentRepository;
 import com.project.cms.service.*;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,119 +29,167 @@ public class InstructorController {
     private final NoteService noteService;
     private final FilesStorageService filesStorageService;
     private final Mapper mapper;
-
+    private final PendingCourseEnrollmentRepository pendingCourseEnrollmentRepository;
+    private final PendingGroupEnrollmentRepository pendingGroupEnrollmentRepository;
     @Autowired
-    public InstructorController(CourseService courseService, InstructorService instructorService, StudentService studentService, NoteService noteService, FilesStorageService filesStorageService, Mapper mapper) {
+    public InstructorController(CourseService courseService, InstructorService instructorService, StudentService studentService, NoteService noteService, FilesStorageService filesStorageService, Mapper mapper, PendingCourseEnrollmentRepository pendingCourseEnrollmentRepository, PendingGroupEnrollmentRepository pendingGroupEnrollmentRepository) {
         this.courseService = courseService;
         this.instructorService = instructorService;
         this.studentService = studentService;
         this.noteService = noteService;
         this.filesStorageService = filesStorageService;
         this.mapper = mapper;
+        this.pendingCourseEnrollmentRepository = pendingCourseEnrollmentRepository;
+        this.pendingGroupEnrollmentRepository = pendingGroupEnrollmentRepository;
     }
+
     @PostMapping("/add/course")
-    @PreAuthorize("hasRole('INSTRUCTOR')")
-    public ResponseEntity <?> addCourse(@RequestBody CourseRegister courseRegister){
-        Course course= mapper.map(courseRegister,Course.class);
-        try{
+//    @PreAuthorize("hasRole('INSTRUCTOR')")
+    public ResponseEntity<?> addCourse(@RequestBody CourseRegister courseRegister) {
+        Course course = mapper.map(courseRegister, Course.class);
+        try {
             courseService.save(course);
             return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception E) {
+            return new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE);
         }
-        catch (Exception E) {
-        return new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE);
-        }
-        }
-        @PutMapping("/deactivate/course/{id}")
-    public ResponseEntity<?> deactivateCourse(@PathVariable String id){
-            Optional<Course> course= courseService.findOne(id);
-            if(course.isEmpty())
-                return ResponseEntity.notFound().build();
-            course.get().setActive(false);
-            return ResponseEntity.ok(courseService.save(course.get()));
-        }
+    }
+
+    @PutMapping("/deactivate/course/{id}")
+    public ResponseEntity<?> deactivateCourse(@PathVariable String id) {
+        Optional<Course> course = courseService.findOne(id);
+        if (course.isEmpty())
+            return ResponseEntity.notFound().build();
+        course.get().setActive(false);
+        return ResponseEntity.ok(courseService.save(course.get()));
+    }
 
     @PutMapping("/activate/course/{id}")
-    public ResponseEntity<?> activateCourse(@PathVariable String id){
-        Optional<Course> course= courseService.findOne(id);
-        if(course.isEmpty())
+    public ResponseEntity<?> activateCourse(@PathVariable String id) {
+        Optional<Course> course = courseService.findOne(id);
+        if (course.isEmpty())
             return ResponseEntity.notFound().build();
         course.get().setActive(true);
         return ResponseEntity.ok(courseService.save(course.get()));
     }
+
     @PutMapping("/course/{id}/capacity")
-    public ResponseEntity<?> capacity(@PathVariable String id,@RequestBody @Positive int capacity){
-        Optional<Course> course= courseService.findOne(id);
-        if(course.isEmpty())
+    public ResponseEntity<?> capacity(@PathVariable String id, @RequestBody @Positive int capacity) {
+        Optional<Course> course = courseService.findOne(id);
+        if (course.isEmpty())
             return ResponseEntity.notFound().build();
         course.get().setCapacity(capacity);
         return ResponseEntity.ok(courseService.save(course.get()));
     }
+
     @PutMapping("/course/{id}/timetable")
-    public ResponseEntity<?> timetable(@PathVariable String id, @RequestBody MultipartFile timetable){
-        Optional<Course> course= courseService.findOne(id);
-        if(course.isEmpty())
+    public ResponseEntity<?> timetable(@PathVariable String id, @RequestBody MultipartFile timetable) {
+        Optional<Course> course = courseService.findOne(id);
+        if (course.isEmpty())
             return ResponseEntity.notFound().build();
-        filesStorageService.saveTimetable(timetable,course.get().getTimetable());
+        filesStorageService.saveTimetable(timetable, course.get().getTimetable());
         return ResponseEntity.ok().build();
     }
+
     @PutMapping("/course/{id}/update")
-    public ResponseEntity<?> update(@PathVariable String id, @RequestBody CourseRegister courseRegister){
-        Optional<Course> course= courseService.findOne(id);
-        if(course.isEmpty())
+    public ResponseEntity<?> update(@PathVariable String id, @RequestBody CourseRegister courseRegister) {
+        Optional<Course> course = courseService.findOne(id);
+        if (course.isEmpty())
             return ResponseEntity.notFound().build();
-        course.get().setId(courseRegister.getId());
-        course.get().setName(courseRegister.getName());
-        course.get().setImageURL(courseRegister.getImageURL());
-        course.get().setCourseDuration(courseRegister.getCourseDuration());
-        course.get().setRegisterDuration(courseRegister.getRegisterDuration());
-       course.get().setAddress(courseRegister.getAddress());
-       course.get().setCity(courseRegister.getCity());
-       course.get().setCountry(courseRegister.getCountry());
-       return ResponseEntity.ok(courseService.save(course.get()));
+        course.get().setCourse(courseRegister);
+        return ResponseEntity.ok(courseService.save(course.get()));
     }
+
     @GetMapping("/student/{id}/cv")
-    public ResponseEntity<?> cvStudent(@PathVariable String id){
-        Optional<Student> student= studentService.findOne(id);
-        if(student.isEmpty())
+    public ResponseEntity<?> cvStudent(@PathVariable String id) {
+        Optional<Student> student = studentService.findOne(id);
+        if (student.isEmpty())
             return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(filesStorageService.loadCv(student.get().getCv())) ;
+        return ResponseEntity.ok(filesStorageService.loadCv(student.get().getCv()));
     }
+
     @PutMapping("/course/{id}/post")
-    public ResponseEntity<?> post(@PathVariable String id,@RequestBody String post){
-        Optional<Course> course= courseService.findOne(id);
-        if(course.isEmpty())
+    public ResponseEntity<?> post(@PathVariable String id, @RequestBody String post) {
+        Optional<Course> course = courseService.findOne(id);
+        if (course.isEmpty())
             return ResponseEntity.notFound().build();
         course.get().addPost(post);
         return ResponseEntity.ok(courseService.save(course.get()));
     }
-    @PutMapping("/{idInstructor}/course/{idCourse}/student/{idStudent}/note")
-    public ResponseEntity<?> note(@PathVariable String idInstructor,@PathVariable String idCourse,@PathVariable String idStudent,@RequestBody String note){
-        Optional<Instructor> instructor= instructorService.findOne(idInstructor);
-        if(instructor.isEmpty())
+
+    @PostMapping("/course/{idCourse}/student/{idStudent}/note")
+    public ResponseEntity<?> note(@PathVariable String idCourse, @PathVariable String idStudent, @RequestBody String note) {
+
+        Optional<Course> course = courseService.findOne(idCourse);
+        if (course.isEmpty())
             return ResponseEntity.notFound().build();
-        Optional<Course> course= courseService.findOne(idCourse);
-        if(course.isEmpty())
+        Optional<Student> student = studentService.findOne(idStudent);
+        if (student.isEmpty())
             return ResponseEntity.notFound().build();
-        Optional<Student> student= studentService.findOne(idStudent);
-        if(student.isEmpty())
-            return ResponseEntity.notFound().build();
-        Note note1= new Note();
-        note1.setInstructorId(idInstructor);
-        note1.setCourseId(idCourse);
-        note1.setStudentEmail(student.get().getEmail());
-        note1.setNote(note);
-        return ResponseEntity.ok(noteService.save(note1));
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!(principal instanceof AnonymousAuthenticationToken)) {
+            return ResponseEntity.ok(noteService.save(new Note(((UserDetails) principal).getUsername(), student.get().getEmail(), idCourse, note)));
+        } else return ResponseEntity.badRequest().body("You must be logged!");
+
     }
+
     @PutMapping("/course/{id}/add/group")
-    public ResponseEntity<?> addGroup(@PathVariable String id, @RequestBody GroupRequest group){
-        Optional<Course> course= courseService.findOne(id);
-        if(course.isEmpty())
+    public ResponseEntity<?> addGroup(@PathVariable String id, @RequestBody GroupRequest group) {
+        Optional<Course> course = courseService.findOne(id);
+        if (course.isEmpty())
             return ResponseEntity.notFound().build();
-        course.get().addGroup(mapper.map(group,Group.class));
+
+        Group group1 = mapper.map(group, Group.class);
+        group1.setCourseId(id);
+        courseService.saveGroup(group1);
         return ResponseEntity.ok().build();
     }
 
+    @PutMapping("/course/{idCourse}/enroll/{idStudent}")
 
+    public ResponseEntity<?> addStudentAtCourse(@PathVariable String idCourse, @PathVariable String idStudent) {
+        Optional<Course> course = courseService.findOne(idCourse);
+        if (course.isEmpty())
+            return ResponseEntity.notFound().build();
+        Optional<Student> student = studentService.findOne(idStudent);
+        if (student.isEmpty())
+            return ResponseEntity.notFound().build();
+        Optional<PendingCourseEnrollment> pendingCourseEnrollment = pendingCourseEnrollmentRepository.findByCourseIdAndStudentEmail(idCourse, idStudent);
+        if (pendingCourseEnrollment.isEmpty())
+            return ResponseEntity.notFound().build();
+        if (course.get().getCapacity() - course.get().getStudents().size() - 1 > 0) {
+            course.get().addStudent(student.get());
+            pendingCourseEnrollmentRepository.delete(pendingCourseEnrollment.get());
+            return ResponseEntity.ok(courseService.save(course.get()));
+        }
+        return ResponseEntity.badRequest().build();
     }
+
+    @PutMapping("/course/{idCourse}/group/{groupNo}/student/{idStudent}")
+    public ResponseEntity<?> addStudentInGroup(@PathVariable String idCourse, @PathVariable String groupNo, @PathVariable String idStudent) {
+        Optional<Course> course = courseService.findOne(idCourse);
+        Optional<Student> student = studentService.findOne(idStudent);
+        if (course.isEmpty())
+            return ResponseEntity.notFound().build();
+        if (student.isEmpty())
+            return ResponseEntity.notFound().build();
+        Optional<PendingGroupEnrollment> group = pendingGroupEnrollmentRepository.findByCourseIdAndGroupNoAndStudentEmail(idCourse, groupNo, idStudent);
+        if (group.isEmpty())
+            return ResponseEntity.notFound().build();
+        if (!course.get().getStudents().contains(student.get()))
+            return ResponseEntity.badRequest().build();
+        Optional<Group> group1 = courseService.findByCourseIdAndGroupNo(idCourse,groupNo);
+        if (group1.isEmpty())
+            return ResponseEntity.notFound().build();
+        if (group1.get().getCapacity() - group1.get().getStudents().size() - 1 > 0) {
+            group1.get().addStudent(student.get());
+            pendingGroupEnrollmentRepository.delete(group.get());
+            return ResponseEntity.ok(courseService.saveGroup(group1.get()));
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+
+}
 
 

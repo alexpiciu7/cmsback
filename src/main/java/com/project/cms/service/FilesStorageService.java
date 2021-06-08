@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.stream.Stream;
 
 @Service
@@ -32,9 +33,9 @@ public class FilesStorageService implements IFilesStorageService {
     @Override
     public void saveCv(MultipartFile file, String name) {
         try {
-            Files.copy(file.getInputStream(), this.cvUpload.resolve(name));
+            Files.copy(file.getInputStream(), this.cvUpload.resolve(name), StandardCopyOption.REPLACE_EXISTING);
         } catch (Exception e) {
-            throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
+            throw new RuntimeException("Could not store the file. Error: " + e.getMessage()+" "+file.getOriginalFilename());
         }
     }
 

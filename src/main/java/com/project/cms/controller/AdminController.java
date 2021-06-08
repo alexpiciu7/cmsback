@@ -1,18 +1,13 @@
 package com.project.cms.controller;
 
 import com.project.cms.exception.CustomException;
-import com.project.cms.model.Admin;
-import com.project.cms.model.ERole;
 import com.project.cms.payload.request.InstructorRegister;
 import com.project.cms.payload.request.ManagerRegister;
-import com.project.cms.repository.AdminRepository;
-import com.project.cms.repository.RoleRepository;
 import com.project.cms.service.IAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;

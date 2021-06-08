@@ -14,10 +14,11 @@ import java.util.Set;
 @NoArgsConstructor
 public class Group {
 
-    private String course_id;
-    private int groupNo;
+    private String courseId;
+    private String groupNo;
     private int capacity;
     @DBRef
     private Set<Student> students=new HashSet<>();
+    public void addStudent(Student student){students.add(student); }
 
 }

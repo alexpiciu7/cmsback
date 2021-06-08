@@ -1,10 +1,10 @@
 package com.project.cms.controller;
 
-import com.project.cms.model.Course;
-import com.project.cms.model.PendingCourseEnrollment;
-import com.project.cms.model.Student;
+import com.project.cms.model.*;
 import com.project.cms.payload.request.CourseRegister;
 import com.project.cms.payload.request.StudentRegister;
+import com.project.cms.repository.GroupRepository;
+import com.project.cms.repository.PendingGroupEnrollmentRepository;
 import com.project.cms.service.ICourseService;
 import com.project.cms.service.IFilesStorageService;
 import com.project.cms.service.IStudentService;
@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.Date;
 import java.util.Optional;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -34,6 +35,10 @@ public class StudentController {
     private IFilesStorageService filesStorageService;
     @Autowired
     private Mapper mapper;
+    @Autowired
+    private GroupRepository groupRepository;
+    @Autowired
+    private PendingGroupEnrollmentRepository pendingGroupEnrollmentRepository;
     @Transactional
     @RequestMapping(value = "/register", method = RequestMethod.POST, consumes = {"multipart/form-data"}, produces =
             "application/json")
@@ -61,16 +66,34 @@ public class StudentController {
 
     @PostMapping("/courses/{id}/enroll")
     public ResponseEntity<?> enrollCourse(@PathVariable String id){
-        if(courseService.findOne(id).isEmpty())
+        Optional<Course> course=courseService.findOne(id);
+        if(course.isEmpty())
             return ResponseEntity.notFound().build();
+        if(!course.get().isActive())
+            return ResponseEntity.badRequest().body("Course is not active!");
+        if(!(course.get().getRegisterDuration().getStartDate().after(new Date())&&course.get().getRegisterDuration().getEndDate().before(new Date())))
+            return ResponseEntity.badRequest().body("Wrong date!");
         Object principal= SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if(!(principal instanceof AnonymousAuthenticationToken)){
-            String studentId=((UserDetails) principal).getUsername();
-            PendingCourseEnrollment enroll=new PendingCourseEnrollment();
-            enroll.setCourseId(id);
-            enroll.setStudentEmail(studentId);
-           return ResponseEntity.ok(studentService.enroll(enroll));
+            PendingCourseEnrollment enroll=new PendingCourseEnrollment(id,((UserDetails) principal).getUsername());
+           return ResponseEntity.ok(studentService.enrollCourse(enroll));
+        }
+        else return  ResponseEntity.badRequest().body("You must be logged!");
+    }
+
+    @PostMapping("/courses/{idCourse}/group/{groupNo}/enroll")
+    public ResponseEntity<?> enrollGroup(@PathVariable String idCourse, @PathVariable String groupNo){
+        Optional<Course> course=courseService.findOne(idCourse);
+        Optional<Group> group=groupRepository.findByGroupNo(groupNo);
+        if(course.isEmpty())
+            return ResponseEntity.notFound().build();
+        if(group.isEmpty())
+            return ResponseEntity.notFound().build();
+        Object principal= SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(!(principal instanceof AnonymousAuthenticationToken)){
+            PendingGroupEnrollment enroll=new PendingGroupEnrollment(idCourse,groupNo,((UserDetails) principal).getUsername());
+            return ResponseEntity.ok(studentService.enrollGroup(enroll));
         }
         else return  ResponseEntity.badRequest().body("You must be logged!");
     }

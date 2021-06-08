@@ -8,7 +8,6 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class GroupRequest {
-    private String course_id;
-    private int groupNo;
+    private String groupNo;
     private int capacity;
 }

@@ -6,18 +6,20 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
-@Getter
 @Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PendingCourseEnrollment {
+public class PendingGroupEnrollment {
     @Id
     private String id;
     private String courseId;
+    private String groupNo;
     private String studentEmail;
 
-    public PendingCourseEnrollment(String id, String studentEmail) {
-        this.id = id;
+    public PendingGroupEnrollment(String courseId, String groupNo, String studentEmail) {
+        this.courseId = courseId;
+        this.groupNo = groupNo;
         this.studentEmail = studentEmail;
     }
 }
