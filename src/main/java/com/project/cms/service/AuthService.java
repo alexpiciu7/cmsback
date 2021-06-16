@@ -40,7 +40,7 @@ public class AuthService implements IAuthService {
             String token = jwtUtils.generateJwtToken(username,roleRepository.findByName(ERole.valueOf(au.getAuthorities().stream().findFirst().get().toString())).get() );
             Map<Object, Object> model = new HashMap<>();
             model.put("email", username);
-            model.put("roles",roleRepository.findByName(ERole.valueOf(au.getAuthorities().stream().findFirst().get().toString())).get());
+            model.put("roles",roleRepository.findByName(ERole.valueOf(au.getAuthorities().stream().findFirst().get().toString())).get().getName());
             model.put("token", token);
             return model;
         } catch (AuthenticationException e) {
