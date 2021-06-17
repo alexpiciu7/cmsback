@@ -117,10 +117,10 @@ public class InstructorController {
         return ResponseEntity.ok(courseService.save(course.get()));
     }
 
-    @PostMapping("/course/{idCourse}/student/{email}/note")
-    public ResponseEntity<?> note(@PathVariable String idCourse, @PathVariable String email, @RequestBody String note) {
+    @PostMapping("/course/{courseId}/student/{email}/note")
+    public ResponseEntity<?> note(@PathVariable String courseId, @PathVariable String email, @RequestBody String note) {
 
-        Optional<Course> course = courseService.findOne(idCourse);
+        Optional<Course> course = courseService.findOne(courseId);
         if (course.isEmpty())
             return ResponseEntity.notFound().build();
         Optional<Student> student = studentService.findOne(email);
@@ -128,7 +128,7 @@ public class InstructorController {
             return ResponseEntity.notFound().build();
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (!(principal instanceof AnonymousAuthenticationToken)) {
-            return ResponseEntity.ok(noteService.save(new Note(((UserDetails) principal).getUsername(), student.get().getEmail(), idCourse, note)));
+            return ResponseEntity.ok(noteService.save(new Note(((UserDetails) principal).getUsername(), student.get().getEmail(), courseId, note)));
         } else return ResponseEntity.badRequest().body("You must be logged!");
 
     }
@@ -145,16 +145,16 @@ public class InstructorController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/course/{idCourse}/enroll/{email}")
+    @PutMapping("/course/{courseId}/enroll/{email}")
 
-    public ResponseEntity<?> addStudentAtCourse(@PathVariable String idCourse, @PathVariable String email) {
-        Optional<Course> course = courseService.findOne(idCourse);
+    public ResponseEntity<?> addStudentAtCourse(@PathVariable String courseId, @PathVariable String email) {
+        Optional<Course> course = courseService.findOne(courseId);
         if (course.isEmpty())
             return ResponseEntity.notFound().build();
         Optional<Student> student = studentService.findOne(email);
         if (student.isEmpty())
             return ResponseEntity.notFound().build();
-        Optional<PendingCourseEnrollment> pendingCourseEnrollment = pendingCourseEnrollmentRepository.findByCourseIdAndStudentEmail(idCourse, email);
+        Optional<PendingCourseEnrollment> pendingCourseEnrollment = pendingCourseEnrollmentRepository.findByCourseIdAndStudentEmail(courseId, email);
         if (pendingCourseEnrollment.isEmpty())
             return ResponseEntity.notFound().build();
         if (course.get().getCapacity() - course.get().getStudents().size() - 1 > 0) {
@@ -165,21 +165,21 @@ public class InstructorController {
         return ResponseEntity.badRequest().build();
     }
 
-    @PutMapping("/course/{idCourse}/group/{groupNo}/student/{email}")
-    public ResponseEntity<?> addStudentInGroup(@PathVariable String idCourse, @PathVariable String groupNo,
+    @PutMapping("/course/{courseId}/group/{groupNo}/student/{email}")
+    public ResponseEntity<?> addStudentInGroup(@PathVariable String courseId, @PathVariable String groupNo,
                                                @PathVariable String email) {
-        Optional<Course> course = courseService.findOne(idCourse);
+        Optional<Course> course = courseService.findOne(courseId);
         Optional<Student> student = studentService.findOne(email);
         if (course.isEmpty())
             return ResponseEntity.notFound().build();
         if (student.isEmpty())
             return ResponseEntity.notFound().build();
-        Optional<PendingGroupEnrollment> group = pendingGroupEnrollmentRepository.findByCourseIdAndGroupNoAndStudentEmail(idCourse, groupNo, email);
+        Optional<PendingGroupEnrollment> group = pendingGroupEnrollmentRepository.findByCourseIdAndGroupNoAndStudentEmail(courseId, groupNo, email);
         if (group.isEmpty())
             return ResponseEntity.notFound().build();
         if (!course.get().getStudents().contains(student.get()))
             return ResponseEntity.badRequest().build();
-        Optional<Group> group1 = courseService.findByCourseIdAndGroupNo(idCourse, groupNo);
+        Optional<Group> group1 = courseService.findByCourseIdAndGroupNo(courseId, groupNo);
         if (group1.isEmpty())
             return ResponseEntity.notFound().build();
         if (group1.get().getCapacity() - group1.get().getStudents().size() - 1 > 0) {
