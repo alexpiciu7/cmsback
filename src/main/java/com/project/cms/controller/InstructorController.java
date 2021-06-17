@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.Positive;
 import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/instructor")
 public class InstructorController {

@@ -23,9 +23,9 @@ import javax.validation.Valid;
 import java.util.Date;
 import java.util.Optional;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/student")
+@CrossOrigin(origins = "http://localhost:4200")
+@RequestMapping("/api/student")
 public class StudentController {
 
     private final IStudentService studentService;
@@ -83,7 +83,7 @@ public class StudentController {
 
         if(!(principal instanceof AnonymousAuthenticationToken)){
             PendingCourseEnrollment enroll=new PendingCourseEnrollment(id,((UserDetails) principal).getUsername());
-           return ResponseEntity.ok(studentService.enrollCourse(enroll));
+            return ResponseEntity.ok(studentService.enrollCourse(enroll));
         }
         else return  ResponseEntity.badRequest().body("You must be logged!");
     }
