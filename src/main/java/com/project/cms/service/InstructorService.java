@@ -25,7 +25,7 @@ public class InstructorService implements IInstructorService {
 
     @Override
     public Optional<Instructor> findOne(String id) {
-        return instructorRepository.findById(id);
+        return Optional.of(instructorRepository.findByEmail(id));
     }
 
     @Override

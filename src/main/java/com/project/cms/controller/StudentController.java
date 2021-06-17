@@ -122,9 +122,9 @@ public class StudentController {
         return ResponseEntity.ok(course.get().getPost());
     }
 
-    @PutMapping("/{id}/update/cv")
-    public ResponseEntity<?> updateCv(@PathVariable String id, @RequestBody MultipartFile cv){
-        Optional<Student> student= studentService.findOne(id);
+    @PutMapping("/{email}/update/cv")
+    public ResponseEntity<?> updateCv(@PathVariable String email, @RequestBody MultipartFile cv){
+        Optional<Student> student= studentService.findOne(email);
         if(student.isEmpty())
             return ResponseEntity.notFound().build();
         if(cv==null)

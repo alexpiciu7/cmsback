@@ -44,33 +44,33 @@ public class AdminController {
         }
     }
 
-    @PutMapping("/activate/manager/{id}")
+    @PutMapping("/activate/manager/{email}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> activateManagerAccount(@PathVariable String id) {
+    public ResponseEntity<?> activateManagerAccount(@PathVariable String email) {
         try {
-            adminService.activateManagerAccount(id);
+            adminService.activateManagerAccount(email);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (CustomException e) {
             return new ResponseEntity<>(HttpStatus.valueOf(e.getExceptionId()));
         }
     }
 
-    @PutMapping("/activate/instructor/{id}")
+    @PutMapping("/activate/instructor/{email}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> activateInstructorAccount(@PathVariable String id) {
+    public ResponseEntity<?> activateInstructorAccount(@PathVariable String email) {
         try {
-            adminService.activateInstructorAccount(id);
+            adminService.activateInstructorAccount(email);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (CustomException e) {
             return new ResponseEntity<>(HttpStatus.valueOf(e.getExceptionId()));
         }
     }
 
-    @PutMapping("/activate/student/{id}")
+    @PutMapping("/activate/student/{email}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> activateStudentAccount(@PathVariable String id) {
+    public ResponseEntity<?> activateStudentAccount(@PathVariable String email) {
         try {
-            adminService.activateStudentAccount(id);
+            adminService.activateStudentAccount(email);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (CustomException e) {
             return new ResponseEntity<>(HttpStatus.valueOf(e.getExceptionId()));
@@ -79,9 +79,9 @@ public class AdminController {
 
     @PutMapping("/deactivate/manager/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> deactivateManagerAccount(@PathVariable String id) {
+    public ResponseEntity<?> deactivateManagerAccount(@PathVariable String email) {
         try {
-            adminService.deactivateManagerAccount(id);
+            adminService.deactivateManagerAccount(email);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (CustomException e) {
             return new ResponseEntity<>(HttpStatus.valueOf(e.getExceptionId()));
@@ -99,11 +99,11 @@ public class AdminController {
         }
     }
 
-    @PutMapping("/deactivate/student/{id}")
+    @PutMapping("/deactivate/student/{email}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> deactivateStudentAccount(@PathVariable String id) {
+    public ResponseEntity<?> deactivateStudentAccount(@PathVariable String email) {
         try {
-            adminService.deactivateStudentAccount(id);
+            adminService.deactivateStudentAccount(email);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (CustomException e) {
             return new ResponseEntity<>(HttpStatus.valueOf(e.getExceptionId()));

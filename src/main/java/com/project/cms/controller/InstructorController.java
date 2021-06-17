@@ -100,9 +100,9 @@ public class InstructorController {
         return ResponseEntity.ok(courseService.save(course.get()));
     }
 
-    @GetMapping("/student/{id}/cv")
-    public ResponseEntity<?> cvStudent(@PathVariable String id) {
-        Optional<Student> student = studentService.findOne(id);
+    @GetMapping("/student/{email}/cv")
+    public ResponseEntity<?> cvStudent(@PathVariable String email) {
+        Optional<Student> student = studentService.findOne(email);
         if (student.isEmpty())
             return ResponseEntity.notFound().build();
         return ResponseEntity.ok(filesStorageService.loadCv(student.get().getCv()));
@@ -117,13 +117,13 @@ public class InstructorController {
         return ResponseEntity.ok(courseService.save(course.get()));
     }
 
-    @PostMapping("/course/{idCourse}/student/{idStudent}/note")
-    public ResponseEntity<?> note(@PathVariable String idCourse, @PathVariable String idStudent, @RequestBody String note) {
+    @PostMapping("/course/{idCourse}/student/{email}/note")
+    public ResponseEntity<?> note(@PathVariable String idCourse, @PathVariable String email, @RequestBody String note) {
 
         Optional<Course> course = courseService.findOne(idCourse);
         if (course.isEmpty())
             return ResponseEntity.notFound().build();
-        Optional<Student> student = studentService.findOne(idStudent);
+        Optional<Student> student = studentService.findOne(email);
         if (student.isEmpty())
             return ResponseEntity.notFound().build();
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -145,16 +145,16 @@ public class InstructorController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/course/{idCourse}/enroll/{idStudent}")
+    @PutMapping("/course/{idCourse}/enroll/{email}")
 
-    public ResponseEntity<?> addStudentAtCourse(@PathVariable String idCourse, @PathVariable String idStudent) {
+    public ResponseEntity<?> addStudentAtCourse(@PathVariable String idCourse, @PathVariable String email) {
         Optional<Course> course = courseService.findOne(idCourse);
         if (course.isEmpty())
             return ResponseEntity.notFound().build();
-        Optional<Student> student = studentService.findOne(idStudent);
+        Optional<Student> student = studentService.findOne(email);
         if (student.isEmpty())
             return ResponseEntity.notFound().build();
-        Optional<PendingCourseEnrollment> pendingCourseEnrollment = pendingCourseEnrollmentRepository.findByCourseIdAndStudentEmail(idCourse, idStudent);
+        Optional<PendingCourseEnrollment> pendingCourseEnrollment = pendingCourseEnrollmentRepository.findByCourseIdAndStudentEmail(idCourse, email);
         if (pendingCourseEnrollment.isEmpty())
             return ResponseEntity.notFound().build();
         if (course.get().getCapacity() - course.get().getStudents().size() - 1 > 0) {
@@ -165,15 +165,16 @@ public class InstructorController {
         return ResponseEntity.badRequest().build();
     }
 
-    @PutMapping("/course/{idCourse}/group/{groupNo}/student/{idStudent}")
-    public ResponseEntity<?> addStudentInGroup(@PathVariable String idCourse, @PathVariable String groupNo, @PathVariable String idStudent) {
+    @PutMapping("/course/{idCourse}/group/{groupNo}/student/{email}")
+    public ResponseEntity<?> addStudentInGroup(@PathVariable String idCourse, @PathVariable String groupNo,
+                                               @PathVariable String email) {
         Optional<Course> course = courseService.findOne(idCourse);
-        Optional<Student> student = studentService.findOne(idStudent);
+        Optional<Student> student = studentService.findOne(email);
         if (course.isEmpty())
             return ResponseEntity.notFound().build();
         if (student.isEmpty())
             return ResponseEntity.notFound().build();
-        Optional<PendingGroupEnrollment> group = pendingGroupEnrollmentRepository.findByCourseIdAndGroupNoAndStudentEmail(idCourse, groupNo, idStudent);
+        Optional<PendingGroupEnrollment> group = pendingGroupEnrollmentRepository.findByCourseIdAndGroupNoAndStudentEmail(idCourse, groupNo, email);
         if (group.isEmpty())
             return ResponseEntity.notFound().build();
         if (!course.get().getStudents().contains(student.get()))
