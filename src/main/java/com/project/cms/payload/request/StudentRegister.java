@@ -16,6 +16,6 @@ public class StudentRegister extends SignupRequest {
     private String university;
     @Positive
     private int year;
-    private MultipartFile cv;
+    
 
 }

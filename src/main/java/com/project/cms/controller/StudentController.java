@@ -48,10 +48,10 @@ public class StudentController {
     @Transactional
     @RequestMapping(value = "/register", method = RequestMethod.POST, consumes = {"multipart/form-data"}, produces =
             "application/json")
-    public ResponseEntity<?> registerUser(@Valid @ModelAttribute StudentRegister studentRegister) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody StudentRegister studentRegister,@RequestParam MultipartFile cv) {
 
         try {
-            studentService.register(studentRegister);
+            studentService.register(studentRegister,cv);
             return ResponseEntity.ok(HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
