@@ -24,8 +24,6 @@ public class AuthTokenFilter extends GenericFilterBean {
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
-
     public AuthTokenFilter(JwtUtils jwtTokenProvider) {
         jwtUtils = jwtTokenProvider;
     }

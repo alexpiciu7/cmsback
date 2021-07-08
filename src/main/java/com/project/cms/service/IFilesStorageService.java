@@ -9,11 +9,14 @@ import org.springframework.web.multipart.MultipartFile;
 public interface IFilesStorageService {
     void init();
 
-    void save(MultipartFile file,String name);
+    void saveCv(MultipartFile file, String name);
 
-    Resource load(String filename);
+    Resource loadCv(String filename);
 
-    void deleteAll();
+    void saveTimetable(MultipartFile file, String name);
+
+    Resource loadTimetable(String filename);
+
 
     Stream<Path> loadAll();
 }

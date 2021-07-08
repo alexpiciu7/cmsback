@@ -1,9 +1,12 @@
 package com.project.cms.security;
 
+
 import com.project.cms.security.jwt.AuthEntryPointJwt;
 import com.project.cms.security.jwt.JwtConfigurer;
 import com.project.cms.security.jwt.JwtUtils;
 import com.project.cms.service.UserDetailsServiceImpl;
+import org.dozer.DozerBeanMapper;
+import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,6 +48,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -56,6 +60,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationEntryPoint unauthorizedEntryPoint() {
         return (request, response, authException) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
                 "Unauthorized");
+    }
+    @Bean
+    public Mapper mapper() {
+        return new DozerBeanMapper();
     }
 
     @Override
@@ -71,8 +79,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors().and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests().antMatchers("/api/auth/signin").permitAll()
-                .antMatchers("/api/auth/signup").permitAll()
+                .authorizeRequests().antMatchers("/api/auth/login").permitAll()
+                .antMatchers("/student/register").permitAll()
+                .antMatchers("/*").permitAll()
+                .antMatchers("/*/*").permitAll()
+                .antMatchers("/*/*/*").permitAll()
+                .antMatchers("/*/*/*/*").permitAll()
+                .antMatchers("/*/*/*/*/*").permitAll()
+                .antMatchers("/admin/add/admin").permitAll()
                 .anyRequest().authenticated().anyRequest().authenticated().and().csrf()
                 .disable().exceptionHandling().authenticationEntryPoint(unauthorizedEntryPoint()).and()
                 .apply(new JwtConfigurer(jwtTokenProvider));

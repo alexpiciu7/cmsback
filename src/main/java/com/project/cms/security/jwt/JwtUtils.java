@@ -1,6 +1,6 @@
 package com.project.cms.security.jwt;
 
-import com.project.cms.models.Role;
+import com.project.cms.model.Role;
 import com.project.cms.service.UserDetailsServiceImpl;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,15 +14,14 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
-import java.util.Set;
 
 @Component
 public class JwtUtils {
 
-    @Value("${bezkoder.app.jwtSecret}")
+    @Value("${cms.app.jwtSecret}")
     private String jwtSecret;
 
-    @Value("${bezkoder.app.jwtExpirationMs}")
+    @Value("${cms.app.jwtExpirationMs}")
     private int jwtExpirationMs;
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
@@ -49,10 +48,10 @@ public class JwtUtils {
         return null;
     }
 
-    public String generateJwtToken(String email, Set<Role> set) {
+    public String generateJwtToken(String email,Role set) {
 
         Claims claims = Jwts.claims().setSubject(email);
-        claims.put("roles", set);
+        claims.put("role", set);
         Date now = new Date();
         Date validity = new Date(now.getTime() + jwtExpirationMs);
         return Jwts.builder()
