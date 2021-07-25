@@ -48,13 +48,13 @@ public class StudentController {
     @Transactional
     @RequestMapping(value = "/register", method = RequestMethod.POST, consumes = {"multipart/form-data"}, produces =
             "application/json")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody StudentRegister studentRegister,@RequestParam MultipartFile cv) {
+    public ResponseEntity<?> registerUser(@ModelAttribute StudentRegister studentRegister) {
 
         try {
-            studentService.register(studentRegister,cv);
+            studentService.register(studentRegister,studentRegister.getCv());
             return ResponseEntity.ok(HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getCause());
         }
     }
     @GetMapping("/course/all")
