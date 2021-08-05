@@ -46,12 +46,17 @@ public class InstructorController {
 
     @PostMapping("/add/course")
 //    @PreAuthorize("hasRole('INSTRUCTOR')")
-    public ResponseEntity<?> addCourse(@RequestBody CourseRegister courseRegister) {
-        Course course = mapper.map(courseRegister, Course.class);
+    public ResponseEntity<?> addCourse(@ModelAttribute CourseRegister courseRegister) {
         try {
+            Course course = new Course();
+            course.setCourse(courseRegister);
+            filesStorageService.saveCourseImage(courseRegister.getImage());
+            course.setImageURL(courseRegister.getImage().getOriginalFilename());
             courseService.save(course);
             return new ResponseEntity<>(HttpStatus.OK);
+
         } catch (Exception E) {
+            E.printStackTrace();
             return new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE);
         }
     }

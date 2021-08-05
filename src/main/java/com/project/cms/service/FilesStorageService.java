@@ -18,12 +18,14 @@ import java.util.stream.Stream;
 public class FilesStorageService implements IFilesStorageService {
 
     private final Path cvUpload = Paths.get("cv");
-    private final Path  timetableUpload = Paths.get("timetable");
+    private final Path timetableUpload = Paths.get("timetable");
+    private final Path courseImageUpload = Paths.get("course");
 
     @Override
     public void init() {
         try {
             Files.createDirectory(cvUpload);
+            Files.createDirectory(courseImageUpload);
             Files.createDirectory(timetableUpload);
         } catch (IOException e) {
             throw new RuntimeException("Could not initialize folder for upload!");
@@ -35,7 +37,7 @@ public class FilesStorageService implements IFilesStorageService {
         try {
             Files.copy(file.getInputStream(), this.cvUpload.resolve(name), StandardCopyOption.REPLACE_EXISTING);
         } catch (Exception e) {
-            throw new RuntimeException("Could not store the file. Error: " + e.getMessage()+" "+file.getOriginalFilename());
+            throw new RuntimeException("Could not store the file. Error: " + e.getMessage() + " " + file.getOriginalFilename());
         }
     }
 
@@ -59,6 +61,16 @@ public class FilesStorageService implements IFilesStorageService {
     public void saveTimetable(MultipartFile file, String name) {
         try {
             Files.copy(file.getInputStream(), this.timetableUpload.resolve(name));
+        } catch (Exception e) {
+            throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
+        }
+    }
+
+
+    public void saveCourseImage(MultipartFile file) {
+        try {
+            String name = courseImageUpload + file.getOriginalFilename();
+            Files.copy(file.getInputStream(), this.courseImageUpload.resolve(name));
         } catch (Exception e) {
             throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
         }

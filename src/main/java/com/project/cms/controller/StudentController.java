@@ -3,6 +3,7 @@ package com.project.cms.controller;
 import com.project.cms.model.*;
 import com.project.cms.payload.request.CourseRegister;
 import com.project.cms.payload.request.StudentRegister;
+import com.project.cms.payload.response.CourseResponse;
 import com.project.cms.repository.GroupRepository;
 import com.project.cms.repository.PendingGroupEnrollmentRepository;
 import com.project.cms.service.ICourseService;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.nio.file.Path;
 import java.util.Date;
 import java.util.Optional;
 
@@ -59,7 +61,9 @@ public class StudentController {
     }
     @GetMapping("/course/all")
     public ResponseEntity<?> getAllCourses(){
-        return ResponseEntity.ok(courseService.getAll().stream().map(x->mapper.map(x,CourseRegister.class)));
+        return ResponseEntity.ok(courseService.getAll().stream().map(x->mapper.map(x, CourseResponse.class)).peek(
+                x->x.setImageURL(Path.of("course").toAbsolutePath()+x.getImageURL())
+        ));
     }
 
     @GetMapping("/course/{id}")
@@ -67,7 +71,9 @@ public class StudentController {
         Optional<Course> course= courseService.findOne(id);
         if(course.isEmpty())
             return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(mapper.map(course.get(), CourseRegister.class));
+        CourseResponse courseResponse=mapper.map(course.get(), CourseResponse.class);
+        courseResponse.setImageURL(Path.of("course").toAbsolutePath()+course.get().getImageURL());
+        return ResponseEntity.ok(courseResponse);
     }
 
     @PostMapping("/course/{id}/enroll")

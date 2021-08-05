@@ -1,4 +1,4 @@
-package com.project.cms.payload.request;
+package com.project.cms.payload.response;
 
 import com.project.cms.model.Duration;
 import lombok.Getter;
@@ -9,18 +9,17 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-import java.util.ArrayList;
-
 @Getter
 @Setter
 @NoArgsConstructor
-public class CourseRegister {
+public class CourseResponse {
+    @NotBlank
     private String id;
     @NotBlank
     private String name;
     @NotBlank
     private String description;
-    private MultipartFile image;
+    private String imageURL;
     @NotNull
     private Duration courseDuration;
     @NotNull

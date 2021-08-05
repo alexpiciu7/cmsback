@@ -29,7 +29,7 @@ public class Course {
     private String name;
     @NotBlank
     private String description;
-    private ArrayList<String> imageURL = new ArrayList<>();
+    private String imageURL;
     @NotNull
     private Duration courseDuration;
     @NotNull
@@ -60,7 +60,7 @@ public class Course {
     {
         setId(courseRegister.getId());
         setName(courseRegister.getName());
-        setImageURL(courseRegister.getImageURL());
+        setImageURL(courseRegister.getImage().getName());
         setCourseDuration(courseRegister.getCourseDuration());
         setRegisterDuration(courseRegister.getRegisterDuration());
         setAddress(courseRegister.getAddress());
