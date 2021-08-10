@@ -56,7 +56,7 @@ public class Course {
         this.students.remove(student);
     }
     public void addPost(String post) { this.post.add(post); }
-    public void setCourse(CourseRegister courseRegister)
+    public void updateFields(CourseRegister courseRegister)
     {
         setId(courseRegister.getId());
         setName(courseRegister.getName());

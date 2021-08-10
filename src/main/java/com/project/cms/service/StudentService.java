@@ -3,7 +3,6 @@ package com.project.cms.service;
 import com.project.cms.model.*;
 import com.project.cms.payload.request.StudentRegister;
 import com.project.cms.repository.PendingCourseEnrollmentRepository;
-import com.project.cms.repository.PendingGroupEnrollmentRepository;
 import com.project.cms.repository.RoleRepository;
 import com.project.cms.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,16 +21,14 @@ public class StudentService implements IStudentService{
     private final RoleRepository roleRepository;
     private final IFilesStorageService filesStorageService;
     private final PendingCourseEnrollmentRepository pendingCourseEnrollmentRepository;
-    private final PendingGroupEnrollmentRepository pendingGroupEnrollmentRepository;
 
     @Autowired
-    public StudentService(StudentRepository studentRepository, BCryptPasswordEncoder encoder, RoleRepository roleRepository, IFilesStorageService iFilesStorageService, PendingCourseEnrollmentRepository pendingCourseEnrollmentRepository, PendingGroupEnrollmentRepository pendingGroupEnrollmentRepository) {
+    public StudentService(StudentRepository studentRepository, BCryptPasswordEncoder encoder, RoleRepository roleRepository, IFilesStorageService iFilesStorageService, PendingCourseEnrollmentRepository pendingCourseEnrollmentRepository) {
         this.studentRepository = studentRepository;
         this.encoder = encoder;
         this.roleRepository = roleRepository;
         this.filesStorageService = iFilesStorageService;
         this.pendingCourseEnrollmentRepository = pendingCourseEnrollmentRepository;
-        this.pendingGroupEnrollmentRepository = pendingGroupEnrollmentRepository;
     }
 
     @Override
@@ -81,8 +78,4 @@ public class StudentService implements IStudentService{
         return pendingCourseEnrollmentRepository.save(courseEnrollment);
     }
 
-    @Override
-    public PendingGroupEnrollment enrollGroup(PendingGroupEnrollment groupEnrollment) {
-        return pendingGroupEnrollmentRepository.save(groupEnrollment);
-    }
 }

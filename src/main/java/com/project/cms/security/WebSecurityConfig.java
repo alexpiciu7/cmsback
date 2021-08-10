@@ -10,7 +10,6 @@ import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -21,7 +20,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -69,36 +67,30 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests()
+    protected void configure(HttpSecurity http) throws Exception {
+
+
+        http.authorizeRequests()
                 .antMatchers("/").permitAll()
-                .antMatchers(HttpMethod.POST,"/api/student/register").permitAll()
-                .antMatchers(HttpMethod.POST,"/api/auth/login").permitAll()
-                .antMatchers(HttpMethod.POST,"/*").permitAll()
-                .antMatchers(HttpMethod.POST,"/instructor/add/course").permitAll()
-                .antMatchers(HttpMethod.PUT,"/student/course").permitAll()
-                .antMatchers(HttpMethod.PUT,"/student/school").permitAll()
-                .antMatchers(HttpMethod.PUT,"/teacher/school").permitAll()
-                .antMatchers(HttpMethod.PUT,"/teacher/course").permitAll()
-                .antMatchers(HttpMethod.GET,"/api/student/course/all").permitAll()
-                .antMatchers(HttpMethod.GET,"/api/student/course/*").permitAll()
-                .antMatchers(HttpMethod.GET,"/login").permitAll()
-                .antMatchers(HttpMethod.GET,"/course/all").permitAll()
-                .antMatchers(HttpMethod.DELETE,"/course/delete").permitAll()
-                .antMatchers(HttpMethod.DELETE,"/student/delete").permitAll()
-                .antMatchers(HttpMethod.DELETE,"/teacher/delete").permitAll()
-                .antMatchers(HttpMethod.DELETE,"/course/delete").permitAll()
-                .antMatchers(HttpMethod.DELETE,"/schooladmin/delete").permitAll()
-                .antMatchers(HttpMethod.DELETE,"/school/delete").permitAll()
-                .anyRequest().authenticated();
+                .antMatchers("/h2-console/**").permitAll();
 
-        http.addFilterBefore(new CORSFilter(), ChannelProcessingFilter.class)
-                .cors().and().csrf().disable().authorizeRequests()
-                .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
+        http.csrf().disable();
+        http.headers().frameOptions().disable();
+        http.cors().and().csrf().disable()
+                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .authorizeRequests().antMatchers("/api/auth/login").permitAll()
+                .antMatchers("/student/register").permitAll()
+                .antMatchers("/*").permitAll()
+                .antMatchers("/*/*").permitAll()
+                .antMatchers("/*/*/*").permitAll()
+                .antMatchers("/*/*/*/*").permitAll()
+                .antMatchers("/*/*/*/*/*").permitAll()
+                .antMatchers("/admin/add/admin").permitAll()
+                .anyRequest().authenticated().anyRequest().authenticated().and().csrf()
+                .disable().exceptionHandling().authenticationEntryPoint(unauthorizedEntryPoint()).and()
+                .apply(new JwtConfigurer(jwtTokenProvider));
     }
-
 
     @Bean
     public UserDetailsService mongoUserDetails() {

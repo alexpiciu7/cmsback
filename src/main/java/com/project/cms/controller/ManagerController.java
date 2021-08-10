@@ -8,26 +8,29 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@CrossOrigin(origins = "http://localhost:4200")
 @RestController
+@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 @RequestMapping("/manager")
 public class ManagerController {
-   private final ManagerService managerService;
+    private final ManagerService managerService;
 
-   @Autowired
+    @Autowired
     public ManagerController(ManagerService managerService) {
         this.managerService = managerService;
     }
+
     @GetMapping("/get/instructors")
-    public ResponseEntity<?> allInstructors(){
-       return ResponseEntity.ok(managerService.getAllInstructors());
+    public ResponseEntity<?> allInstructors() {
+        return ResponseEntity.ok(managerService.getAllInstructors());
     }
+
     @GetMapping("/get/students")
-    public ResponseEntity<?> allStudents(){
-       return ResponseEntity.ok(managerService.getAllStudents());
+    public ResponseEntity<?> allStudents() {
+        return ResponseEntity.ok(managerService.getAllStudents());
     }
+
     @GetMapping("/get/courses")
-    public  ResponseEntity<?> allCourses(){
-       return ResponseEntity.ok(managerService.getAllCourses());
+    public ResponseEntity<?> allCourses() {
+        return ResponseEntity.ok(managerService.getAllCourses());
     }
 }

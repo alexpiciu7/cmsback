@@ -15,6 +15,6 @@ public interface IStudentService {
     Optional<Student> findOne(String id);
     List<Student> findAll();
     PendingCourseEnrollment enrollCourse(PendingCourseEnrollment courseEnrollment);
-    PendingGroupEnrollment enrollGroup(PendingGroupEnrollment groupEnrollment);
+
 
 }
