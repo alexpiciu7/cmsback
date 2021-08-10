@@ -17,7 +17,7 @@ public class PendingCourseEnrollment {
     private String studentEmail;
 
     public PendingCourseEnrollment(String id, String studentEmail) {
-        this.id = id;
+        this.courseId = id;
         this.studentEmail = studentEmail;
     }
 }
