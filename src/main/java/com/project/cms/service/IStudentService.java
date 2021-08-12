@@ -1,7 +1,6 @@
 package com.project.cms.service;
 
 import com.project.cms.model.PendingCourseEnrollment;
-import com.project.cms.model.PendingGroupEnrollment;
 import com.project.cms.model.Student;
 import com.project.cms.payload.request.StudentRegister;
 import org.springframework.web.multipart.MultipartFile;

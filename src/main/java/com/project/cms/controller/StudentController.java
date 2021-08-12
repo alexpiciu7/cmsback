@@ -59,7 +59,7 @@ public class StudentController {
     @GetMapping("/course/all")
     public ResponseEntity<?> getAllCourses() {
         return ResponseEntity.ok(courseService.getAll().stream().map(x -> mapper.map(x, CourseResponse.class)).peek(
-                x -> x.setImageURL(Path.of("course").toAbsolutePath() + x.getImageURL())
+                x -> x.setImageURL(Path.of("course").toAbsolutePath() + "\\" + x.getImageURL())
         ));
     }
 
