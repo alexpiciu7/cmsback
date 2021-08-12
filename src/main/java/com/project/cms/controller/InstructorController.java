@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Positive;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
@@ -43,15 +45,23 @@ public class InstructorController {
         this.pendingCourseEnrollmentRepository = pendingCourseEnrollmentRepository;
     }
 
-    @PostMapping("/add/course")
+    @PostMapping("{email}/add/course")
 //    @PreAuthorize("hasRole('INSTRUCTOR')")
-    public ResponseEntity<?> addCourse(@ModelAttribute CourseRegister courseRegister) {
+    public ResponseEntity<?> addCourse(@PathVariable String email, @ModelAttribute CourseRegister courseRegister) {
         try {
+            Optional<Instructor> instructor = instructorService.findOne(email);
+            if (instructor.isEmpty())
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             Course course = new Course();
             course.updateFields(courseRegister);
-            filesStorageService.saveCourseImage(courseRegister.getImage());
-            course.setImageURL(courseRegister.getImage().getOriginalFilename());
+            if (courseRegister.getImage()!=null)
+            {filesStorageService.saveCourseImage(courseRegister.getImage());
+            course.setImageURL(courseRegister.getImage().getOriginalFilename());}
+            else
+                course.setImageURL("");
             courseService.save(course);
+            instructor.get().addCourse(course);
+            instructorService.save(instructor.get());
             return new ResponseEntity<>(HttpStatus.OK);
 
         } catch (Exception E) {
@@ -160,6 +170,15 @@ public class InstructorController {
             return ResponseEntity.ok(courseService.save(course.get()));
         }
         return ResponseEntity.badRequest().build();
+    }
+    @GetMapping("{email}/course/enrolment")
+    public ResponseEntity<?> getPendingEnrollment(@PathVariable String email)
+    {
+        Optional<Instructor> instructor=instructorService.findOne(email);
+        if (instructor.isEmpty())
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        List<String> courseIds=instructor.get().getCourses().stream().map(Course::getId).collect(Collectors.toList());
+        return ResponseEntity.ok(pendingCourseEnrollmentRepository.findAllWithIdIn(courseIds));
     }
 
 }

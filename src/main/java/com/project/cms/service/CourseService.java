@@ -34,8 +34,4 @@ public class CourseService implements ICourseService{
     }
 
 
-//    @Override
-//    public int totalGroupParticipants(String courseId) {
-//        return groupRepository.getGroupsTotal(courseId);
-//    }
 }

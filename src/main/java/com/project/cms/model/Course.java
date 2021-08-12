@@ -60,7 +60,7 @@ public class Course {
     {
         setId(courseRegister.getId());
         setName(courseRegister.getName());
-        setImageURL(courseRegister.getImage().getName());
+        setImageURL(courseRegister.getImage()!=null?courseRegister.getImage().getName():"");
         setCourseDuration(courseRegister.getCourseDuration());
         setRegisterDuration(courseRegister.getRegisterDuration());
         setAddress(courseRegister.getAddress());

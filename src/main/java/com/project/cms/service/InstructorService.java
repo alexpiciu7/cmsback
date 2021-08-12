@@ -32,4 +32,9 @@ public class InstructorService implements IInstructorService {
     public List<Instructor> getAllInstructor() {
         return instructorRepository.findAll();
     }
+
+    public Instructor save(Instructor instructor)
+    {
+        return instructorRepository.save(instructor);
+    }
 }

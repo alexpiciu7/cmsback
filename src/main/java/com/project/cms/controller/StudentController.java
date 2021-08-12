@@ -13,9 +13,7 @@ import com.project.cms.service.IStudentService;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,7 +67,7 @@ public class StudentController {
         if (course.isEmpty())
             return ResponseEntity.notFound().build();
         CourseDetailResponse courseResponse = mapper.map(course.get(), CourseDetailResponse.class);
-        courseResponse.setImageURL(Path.of("course").toAbsolutePath() + course.get().getImageURL());
+        courseResponse.setImageURL(Path.of("course").toAbsolutePath()+"\\"+ course.get().getImageURL());
         courseResponse.setTimetable(course.get().getTimetable());
         return ResponseEntity.ok(courseResponse);
     }
@@ -87,7 +85,7 @@ public class StudentController {
             return ResponseEntity.badRequest().body("Course is not active!");
         if (!(course.get().getRegisterDuration().getStartDate().after(new Date()) && course.get().getRegisterDuration().getEndDate().before(new Date())))
             return ResponseEntity.badRequest().body("Wrong date!");
-        PendingCourseEnrollment enroll = new PendingCourseEnrollment(id, email);
+        PendingCourseEnrollment enroll = new PendingCourseEnrollment(id,course.get().getName(),email,student.get().getLName()+" "+student.get().getFName());
         return ResponseEntity.ok(studentService.enrollCourse(enroll));
 
     }
@@ -129,6 +127,14 @@ public class StudentController {
         if (student.isEmpty())
             return ResponseEntity.notFound().build();
         return ResponseEntity.ok(mapper.map(student.get(), StudentResponse.class));
+    }
+    @GetMapping("courses/{email}")
+    public ResponseEntity<?> getMyCourses(@PathVariable String email)
+    {
+        Optional<Student> student=studentService.findOne(email);
+        if (student.isEmpty())
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return ResponseEntity.ok("");
     }
 }
 

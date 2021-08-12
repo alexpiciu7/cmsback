@@ -24,7 +24,7 @@ public class AdminController {
     }
 
     @PostMapping("/register/instructor")
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> registerInstructor(@RequestBody InstructorRegister instructorRegister) {
         try {
            return ResponseEntity.ok(adminService.registerInstructor(instructorRegister));
