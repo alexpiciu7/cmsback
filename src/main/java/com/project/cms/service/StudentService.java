@@ -23,7 +23,8 @@ public class StudentService implements IStudentService{
     private final PendingCourseEnrollmentRepository pendingCourseEnrollmentRepository;
 
     @Autowired
-    public StudentService(StudentRepository studentRepository, BCryptPasswordEncoder encoder, RoleRepository roleRepository, PendingCourseEnrollmentRepository pendingCourseEnrollmentRepository) {
+    public StudentService(StudentRepository studentRepository, BCryptPasswordEncoder encoder,
+                          RoleRepository roleRepository, PendingCourseEnrollmentRepository pendingCourseEnrollmentRepository) {
         this.studentRepository = studentRepository;
         this.encoder = encoder;
         this.roleRepository = roleRepository;

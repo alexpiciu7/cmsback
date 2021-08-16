@@ -7,10 +7,7 @@ import com.project.cms.service.*;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -165,7 +162,24 @@ public class InstructorController {
         return ResponseEntity.badRequest().build();
     }
 
-    @GetMapping("{email}/course/enrolment")
+    @DeleteMapping("/course/{courseId}/enroll/{email}")
+    public ResponseEntity<?> rejectStudentFromCourse(@PathVariable String courseId, @PathVariable String email) {
+        Optional<Course> course = courseService.findOne(courseId);
+        if (course.isEmpty())
+            return ResponseEntity.notFound().build();
+        Optional<Student> student = studentService.findOne(email);
+        if (student.isEmpty())
+            return ResponseEntity.notFound().build();
+        Optional<PendingCourseEnrollment> pendingCourseEnrollment = pendingCourseEnrollmentRepository.findByCourseIdAndStudentEmail(courseId, email);
+        if (pendingCourseEnrollment.isEmpty())
+            return ResponseEntity.notFound().build();
+        pendingCourseEnrollmentRepository.delete(pendingCourseEnrollment.get());
+        return ResponseEntity.ok().build();
+
+
+    }
+
+        @GetMapping("{email}/course/enrolment")
     public ResponseEntity<?> getPendingEnrollment(@PathVariable String email) {
         Optional<Instructor> instructor = instructorService.findOne(email);
         if (instructor.isEmpty())

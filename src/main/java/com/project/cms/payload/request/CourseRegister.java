@@ -33,5 +33,4 @@ public class CourseRegister {
     private String address;
     @Positive
     private int capacity;
-    private boolean isActive;
 }

@@ -1,6 +1,5 @@
 package com.project.cms.controller;
 
-import com.project.cms.model.Student;
 import com.project.cms.payload.response.ManagerResponse;
 import com.project.cms.payload.response.StudentResponse;
 import com.project.cms.service.ManagerService;
