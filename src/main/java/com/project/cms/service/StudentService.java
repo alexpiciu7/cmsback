@@ -10,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,15 +20,13 @@ public class StudentService implements IStudentService{
     private final StudentRepository studentRepository;
     private final BCryptPasswordEncoder encoder;
     private final RoleRepository roleRepository;
-    private final IFilesStorageService filesStorageService;
     private final PendingCourseEnrollmentRepository pendingCourseEnrollmentRepository;
 
     @Autowired
-    public StudentService(StudentRepository studentRepository, BCryptPasswordEncoder encoder, RoleRepository roleRepository, IFilesStorageService iFilesStorageService, PendingCourseEnrollmentRepository pendingCourseEnrollmentRepository) {
+    public StudentService(StudentRepository studentRepository, BCryptPasswordEncoder encoder, RoleRepository roleRepository, PendingCourseEnrollmentRepository pendingCourseEnrollmentRepository) {
         this.studentRepository = studentRepository;
         this.encoder = encoder;
         this.roleRepository = roleRepository;
-        this.filesStorageService = iFilesStorageService;
         this.pendingCourseEnrollmentRepository = pendingCourseEnrollmentRepository;
     }
 
@@ -46,9 +45,7 @@ public class StudentService implements IStudentService{
         student.setPassword(encoder.encode(studentRegister.getPassword()));
         student.setUniversity(studentRegister.getUniversity());
         student.setYear(studentRegister.getYear());
-        String fileName = student.getEmail() + ".pdf";
-        filesStorageService.saveCv(cv, fileName);
-        student.setCv(fileName);
+        student.setCv(Base64.getEncoder().encodeToString(cv.getBytes()));
         Role userRole = roleRepository.findByName(ERole.ROLE_STUDENT).orElseThrow(() -> new RuntimeException("Error: Role is not found."));
         student.setRole(userRole);
         student = studentRepository.save(student);

@@ -8,21 +8,26 @@ import com.project.cms.payload.response.CourseDetailResponse;
 import com.project.cms.payload.response.CourseResponse;
 import com.project.cms.payload.response.StudentResponse;
 import com.project.cms.service.ICourseService;
-import com.project.cms.service.IFilesStorageService;
 import com.project.cms.service.IStudentService;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
@@ -31,14 +36,12 @@ public class StudentController {
 
     private final IStudentService studentService;
     private final ICourseService courseService;
-    private final IFilesStorageService filesStorageService;
     private final Mapper mapper;
 
     @Autowired
-    public StudentController(IStudentService studentService, ICourseService courseService, IFilesStorageService filesStorageService, Mapper mapper) {
+    public StudentController(IStudentService studentService, ICourseService courseService, Mapper mapper) {
         this.studentService = studentService;
         this.courseService = courseService;
-        this.filesStorageService = filesStorageService;
         this.mapper = mapper;
     }
 
@@ -56,9 +59,8 @@ public class StudentController {
 
     @GetMapping("/course/all")
     public ResponseEntity<?> getAllCourses() {
-        return ResponseEntity.ok(courseService.getAll().stream().map(x -> mapper.map(x, CourseResponse.class)).peek(
-                x -> x.setImageURL(Path.of("course").toAbsolutePath() + "\\" + x.getImageURL())
-        ));
+        return ResponseEntity.ok(courseService.getAll().stream()
+                .map(x -> mapper.map(x, CourseResponse.class)).collect(Collectors.toList()));
     }
 
     @GetMapping("/course/{id}")
@@ -95,11 +97,8 @@ public class StudentController {
         Optional<Course> course = courseService.findOne(id);
         if (course.isEmpty())
             return ResponseEntity.notFound().build();
-        Resource resource = filesStorageService.loadTimetable(course.get().getTimetable() + ".pdf");
         return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType("application/pdf"))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; " + "filename=\" " + resource.getFilename() + "\"")
-                .body(resource);
+                .body(course.get().getTimetable());
     }
 
     @GetMapping("/course/{id}/post")
@@ -111,13 +110,13 @@ public class StudentController {
     }
 
     @PutMapping("/{email}/cv")
-    public ResponseEntity<?> updateCv(@PathVariable String email, @RequestBody MultipartFile cv) {
+    public ResponseEntity<?> updateCv(@PathVariable String email, @RequestBody MultipartFile cv) throws IOException {
         if (cv == null)
             return ResponseEntity.badRequest().build();
         Optional<Student> student = studentService.findOne(email);
         if (student.isEmpty())
             return ResponseEntity.notFound().build();
-        filesStorageService.saveCv(cv, student.get().getEmail() + ".pdf");
+        student.get().setCv(Base64.getEncoder().encodeToString(cv.getBytes()));
         return ResponseEntity.ok().build();
     }
 

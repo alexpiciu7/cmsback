@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Positive;
+import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,17 +32,15 @@ public class InstructorController {
     private final InstructorService instructorService;
     private final StudentService studentService;
     private final NoteService noteService;
-    private final FilesStorageService filesStorageService;
     private final Mapper mapper;
     private final PendingCourseEnrollmentRepository pendingCourseEnrollmentRepository;
 
     @Autowired
-    public InstructorController(CourseService courseService, InstructorService instructorService, StudentService studentService, NoteService noteService, FilesStorageService filesStorageService, Mapper mapper, PendingCourseEnrollmentRepository pendingCourseEnrollmentRepository) {
+    public InstructorController(CourseService courseService, InstructorService instructorService, StudentService studentService, NoteService noteService, Mapper mapper, PendingCourseEnrollmentRepository pendingCourseEnrollmentRepository) {
         this.courseService = courseService;
         this.instructorService = instructorService;
         this.studentService = studentService;
         this.noteService = noteService;
-        this.filesStorageService = filesStorageService;
         this.mapper = mapper;
         this.pendingCourseEnrollmentRepository = pendingCourseEnrollmentRepository;
     }
@@ -54,10 +54,9 @@ public class InstructorController {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             Course course = new Course();
             course.updateFields(courseRegister);
-            if (courseRegister.getImage()!=null)
-            {filesStorageService.saveCourseImage(courseRegister.getImage());
-            course.setImageURL(courseRegister.getImage().getOriginalFilename());}
-            else
+            if (courseRegister.getImage() != null) {
+                course.setImageURL(Base64.getEncoder().encodeToString(courseRegister.getImage().getBytes()));
+            } else
                 course.setImageURL("");
             courseService.save(course);
             instructor.get().addCourse(course);
@@ -98,11 +97,11 @@ public class InstructorController {
     }
 
     @PutMapping("/course/{id}/timetable")
-    public ResponseEntity<?> timetable(@PathVariable String id, @RequestBody MultipartFile timetable) {
+    public ResponseEntity<?> timetable(@PathVariable String id, @RequestBody MultipartFile timetable) throws IOException {
         Optional<Course> course = courseService.findOne(id);
         if (course.isEmpty())
             return ResponseEntity.notFound().build();
-        filesStorageService.saveTimetable(timetable, course.get().getTimetable());
+        course.get().setTimetable(Base64.getEncoder().encodeToString(timetable.getBytes()));
         return ResponseEntity.ok().build();
     }
 
@@ -120,13 +119,7 @@ public class InstructorController {
         Optional<Student> student = studentService.findOne(email);
         if (student.isEmpty())
             return ResponseEntity.notFound().build();
-
-        Resource resource = filesStorageService.loadCv(student.get().getCv());
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType("application/pdf"))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; " +
-                        "filename=\" " + resource.getFilename() + "\"")
-                .body(resource);
+        return ResponseEntity.ok().body(student.get().getCv());
     }
 
     @PutMapping("/course/{id}/post")
@@ -171,13 +164,13 @@ public class InstructorController {
         }
         return ResponseEntity.badRequest().build();
     }
+
     @GetMapping("{email}/course/enrolment")
-    public ResponseEntity<?> getPendingEnrollment(@PathVariable String email)
-    {
-        Optional<Instructor> instructor=instructorService.findOne(email);
+    public ResponseEntity<?> getPendingEnrollment(@PathVariable String email) {
+        Optional<Instructor> instructor = instructorService.findOne(email);
         if (instructor.isEmpty())
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        List<String> courseIds=instructor.get().getCourses().stream().map(Course::getId).collect(Collectors.toList());
+        List<String> courseIds = instructor.get().getCourses().stream().map(Course::getId).collect(Collectors.toList());
         return ResponseEntity.ok(pendingCourseEnrollmentRepository.findAllWithIdIn(courseIds));
     }
 
