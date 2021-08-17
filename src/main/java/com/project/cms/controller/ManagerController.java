@@ -1,5 +1,6 @@
 package com.project.cms.controller;
 
+import com.project.cms.payload.response.InstructorResponse;
 import com.project.cms.payload.response.ManagerResponse;
 import com.project.cms.payload.response.StudentResponse;
 import com.project.cms.service.ManagerService;
@@ -28,7 +29,12 @@ public class ManagerController {
 
     @GetMapping("/get/instructors")
     public ResponseEntity<?> allInstructors() {
-        return ResponseEntity.ok(managerService.getAllInstructors().stream().map(x->mapper.map(x, ManagerResponse.class)).collect(Collectors.toList()));
+        return ResponseEntity.ok(managerService.getAllInstructors().stream().map(x->mapper.map(x, InstructorResponse.class)).collect(Collectors.toList()));
+    }
+
+    @GetMapping("/get/managers")
+    public ResponseEntity<?> allManagers() {
+        return ResponseEntity.ok(managerService.getAllManagers().stream().map(x->mapper.map(x, ManagerResponse.class)).collect(Collectors.toList()));
     }
 
     @GetMapping("/get/students")
