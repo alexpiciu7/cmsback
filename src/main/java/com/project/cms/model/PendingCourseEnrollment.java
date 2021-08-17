@@ -14,10 +14,14 @@ public class PendingCourseEnrollment {
     @Id
     private String id;
     private String courseId;
+    private String courseName;
     private String studentEmail;
+    private String studentName;
 
-    public PendingCourseEnrollment(String id, String studentEmail) {
-        this.id = id;
+    public PendingCourseEnrollment(String courseId, String courseName, String studentEmail, String studentName) {
+        this.courseId = courseId;
+        this.courseName = courseName;
         this.studentEmail = studentEmail;
+        this.studentName = studentName;
     }
 }

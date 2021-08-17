@@ -29,7 +29,7 @@ public class Course {
     private String name;
     @NotBlank
     private String description;
-    private ArrayList<String> imageURL = new ArrayList<>();
+    private String imageURL;
     @NotNull
     private Duration courseDuration;
     @NotNull
@@ -56,16 +56,19 @@ public class Course {
         this.students.remove(student);
     }
     public void addPost(String post) { this.post.add(post); }
-    public void setCourse(CourseRegister courseRegister)
+    public void updateFields(CourseRegister courseRegister)
     {
         setId(courseRegister.getId());
         setName(courseRegister.getName());
-        setImageURL(courseRegister.getImageURL());
+        setImageURL(courseRegister.getImage()!=null?courseRegister.getImage().getName():"");
         setCourseDuration(courseRegister.getCourseDuration());
         setRegisterDuration(courseRegister.getRegisterDuration());
         setAddress(courseRegister.getAddress());
         setCity(courseRegister.getCity());
         setCountry(courseRegister.getCountry());
+        setActive(courseRegister.isActive());
+        setDescription(courseRegister.getDescription());
+        setCapacity(courseRegister.getCapacity());
 
     }
 

@@ -25,7 +25,8 @@ public class AuthService implements IAuthService {
     private final JwtUtils jwtUtils;
 
     @Autowired
-    public AuthService(AuthenticationManager authenticationManager, RoleRepository roleRepository, BCryptPasswordEncoder encoder, JwtUtils jwtUtils) {
+    public AuthService(AuthenticationManager authenticationManager, RoleRepository roleRepository,
+                       BCryptPasswordEncoder encoder, JwtUtils jwtUtils) {
         this.authenticationManager = authenticationManager;
         this.roleRepository = roleRepository;
         this.encoder = encoder;

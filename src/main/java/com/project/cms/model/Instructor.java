@@ -20,4 +20,8 @@ public class Instructor extends User {
     private String phone;
     @DBRef
     private Set<Course> courses=new HashSet<>();
+    public void addCourse(Course course)
+    {
+        courses.add(course);
+    }
 }
