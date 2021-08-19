@@ -11,10 +11,7 @@ import com.project.cms.service.ICourseService;
 import com.project.cms.service.IStudentService;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -60,7 +57,8 @@ public class StudentController {
     @GetMapping("/course/all")
     public ResponseEntity<?> getAllCourses() {
         return ResponseEntity.ok(courseService.getAll().stream()
-                .map(x -> mapper.map(x, CourseResponse.class)).collect(Collectors.toList()));
+                .map(CourseResponse::new)
+                .collect(Collectors.toList()));
     }
 
     @GetMapping("/course/{id}")
@@ -133,7 +131,13 @@ public class StudentController {
         Optional<Student> student = studentService.findOne(email);
         if (student.isEmpty())
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(
+                courseService.getAll()
+                .stream()
+                .filter(x->x.getStudents().contains(student.get()))
+                .map(CourseResponse::new)
+                .collect(Collectors.toList())
+        );
     }
 }
 

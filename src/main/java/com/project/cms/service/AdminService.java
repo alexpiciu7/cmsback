@@ -87,7 +87,6 @@ public class AdminService implements IAdminService {
         Optional<Student>  student = studentRepository.findById(id);
         if (student.isEmpty()) {
             throw new CustomException("Student not found",404);
-
         }
         Student student1 = student.get();
         if (student1.isActive()) return false;

@@ -21,10 +21,14 @@ public class CourseRegister {
     @NotBlank
     private String description;
     private MultipartFile image;
-    @NotNull
-    private Duration courseDuration;
-    @NotNull
-    private Duration registerDuration;
+    @NotBlank
+    private String courseStart;
+    @NotBlank
+    private String courseEnd;
+    @NotBlank
+    private String courseRegisterStart;
+    @NotBlank
+    private String courseRegisterEnd;
     @NotBlank
     private String country;
     @NotBlank

@@ -88,8 +88,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/*/*/*/*/*").permitAll()
                 .antMatchers("/*/*/*/*/*/*").permitAll()
                 .antMatchers("/admin/add/admin").permitAll()
-                .anyRequest().authenticated().anyRequest().authenticated().and().csrf()
-                .disable().exceptionHandling().authenticationEntryPoint(unauthorizedEntryPoint()).and()
+                .anyRequest()
+                .authenticated()
+                .anyRequest()
+                .authenticated()
+                .and()
+                .csrf()
+                .disable()
+                .exceptionHandling()
+                .authenticationEntryPoint(unauthorizedEntryPoint())
+                .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));
     }
 

@@ -26,14 +26,17 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public void setAdminRepository(AdminRepository adminRepository) {
         this.adminRepository = adminRepository;
     }
+
     @Autowired
     public void setStudentRepository(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
     }
+
     @Autowired
     public void setManagerRepository(ManagerRepository managerRepository) {
         this.managerRepository = managerRepository;
     }
+
     @Autowired
     public void setInstructorRepository(InstructorRepository instructorRepository) {
         this.instructorRepository = instructorRepository;
@@ -43,36 +46,26 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
         User user = new User();
-        Optional<Admin> admin= Optional.ofNullable(adminRepository.findByEmail(email));
-        if (admin.isPresent())
-        {
+        Optional<Admin> admin = Optional.ofNullable(adminRepository.findByEmail(email));
+        if (admin.isPresent()) {
             user.setEmail(admin.get().getEmail());
             user.setPassword(admin.get().getPassword());
             user.setRole(admin.get().getRole());
-        }
-        else
-        {
-            Optional<Manager> manager= Optional.ofNullable(managerRepository.findByEmail(email));
-            if (manager.isPresent())
-            {
+        } else {
+            Optional<Manager> manager = Optional.ofNullable(managerRepository.findByEmail(email));
+            if (manager.isPresent()) {
                 user.setEmail(manager.get().getEmail());
                 user.setPassword(manager.get().getPassword());
                 user.setRole(manager.get().getRole());
-            }
-            else
-            {
-                Optional<Student> student= Optional.ofNullable(studentRepository.findByEmail(email));
-                if (student.isPresent())
-                {
+            } else {
+                Optional<Student> student = Optional.ofNullable(studentRepository.findByEmail(email));
+                if (student.isPresent()) {
                     user.setEmail(student.get().getEmail());
                     user.setPassword(student.get().getPassword());
                     user.setRole(student.get().getRole());
-                }
-                else
-                {
-                    Optional<Instructor> instructor= Optional.ofNullable(instructorRepository.findByEmail(email));
-                    if (instructor.isPresent())
-                    {
+                } else {
+                    Optional<Instructor> instructor = Optional.ofNullable(instructorRepository.findByEmail(email));
+                    if (instructor.isPresent()) {
                         user.setEmail(instructor.get().getEmail());
                         user.setPassword(instructor.get().getPassword());
                         user.setRole(instructor.get().getRole());
@@ -87,7 +80,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     private GrantedAuthority getUserAuthority(Role userRole) {
         GrantedAuthority role;
-        role=new SimpleGrantedAuthority(userRole.getName().name());
+        role = new SimpleGrantedAuthority(userRole.getName().name());
         return role;
     }
 
