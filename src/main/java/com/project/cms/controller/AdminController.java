@@ -39,7 +39,7 @@ public class AdminController {
     }
 
     @PostMapping("/register/manager")
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> registerManager(@RequestBody @Valid ManagerRegister managerRegister) {
         try {
             return ResponseEntity.ok(adminService.registerManager(managerRegister));
@@ -49,7 +49,7 @@ public class AdminController {
     }
 
     @PutMapping("/activate/manager/{email}")
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> activateManagerAccount(@PathVariable String email) {
         try {
             return ResponseEntity.ok(adminService.activateManagerAccount(email));
@@ -60,7 +60,7 @@ public class AdminController {
     }
 
     @PutMapping("/activate/instructor/{email}")
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> activateInstructorAccount(@PathVariable String email) {
         try {
         return ResponseEntity.ok(adminService.activateInstructorAccount(email));
@@ -70,7 +70,7 @@ public class AdminController {
     }
 
     @PutMapping("/activate/student/{email}")
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> activateStudentAccount(@PathVariable String email) {
         try {
            return ResponseEntity.ok(adminService.activateStudentAccount(email));
@@ -80,7 +80,7 @@ public class AdminController {
     }
 
     @PutMapping("/deactivate/manager/{email}")
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deactivateManagerAccount(@PathVariable String email) {
         try {
            return ResponseEntity.ok(adminService.deactivateManagerAccount(email));
@@ -90,7 +90,7 @@ public class AdminController {
     }
 
     @PutMapping("/deactivate/instructor/{email}")
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deactivateInstructorAccount(@PathVariable String email) {
         try {
             return ResponseEntity.ok(adminService.deactivateInstructorAccount(email));
@@ -100,7 +100,7 @@ public class AdminController {
     }
 
     @PutMapping("/deactivate/student/{email}")
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deactivateStudentAccount(@PathVariable String email) {
         try {
            return ResponseEntity.ok(adminService.deactivateStudentAccount(email));

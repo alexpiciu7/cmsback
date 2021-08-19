@@ -179,7 +179,7 @@ public class InstructorController {
 
     }
 
-        @GetMapping("{email}/course/enrolment")
+    @GetMapping("{email}/course/enrolment")
     public ResponseEntity<?> getPendingEnrollment(@PathVariable String email) {
         Optional<Instructor> instructor = instructorService.findOne(email);
         if (instructor.isEmpty())
