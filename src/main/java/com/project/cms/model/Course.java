@@ -12,10 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -61,12 +58,11 @@ public class Course {
         setId(courseRegister.getId());
         setName(courseRegister.getName());
         setImageURL(courseRegister.getImage()!=null?courseRegister.getImage().getName():"");
-        setCourseDuration(courseRegister.getCourseDuration());
-        setRegisterDuration(courseRegister.getRegisterDuration());
+        setCourseDuration(new Duration(new Date(courseRegister.getCourseStart()),new Date(courseRegister.getCourseEnd())));
+        setRegisterDuration(new Duration(new Date(courseRegister.getCourseRegisterStart()),new Date(courseRegister.getCourseRegisterEnd())));
         setAddress(courseRegister.getAddress());
         setCity(courseRegister.getCity());
         setCountry(courseRegister.getCountry());
-        setActive(courseRegister.isActive());
         setDescription(courseRegister.getDescription());
         setCapacity(courseRegister.getCapacity());
 

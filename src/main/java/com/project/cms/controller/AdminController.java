@@ -55,7 +55,6 @@ public class AdminController {
     }
 
     @PutMapping("/activate/instructor/{email}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> activateInstructorAccount(@PathVariable String email) {
         try {
         return ResponseEntity.ok(adminService.activateInstructorAccount(email));
@@ -65,7 +64,6 @@ public class AdminController {
     }
 
     @PutMapping("/activate/student/{email}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> activateStudentAccount(@PathVariable String email) {
         try {
            return ResponseEntity.ok(adminService.activateStudentAccount(email));
@@ -75,7 +73,6 @@ public class AdminController {
     }
 
     @PutMapping("/deactivate/manager/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deactivateManagerAccount(@PathVariable String email) {
         try {
            return ResponseEntity.ok(adminService.deactivateManagerAccount(email));
@@ -85,7 +82,6 @@ public class AdminController {
     }
 
     @PutMapping("/deactivate/instructor/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deactivateInstructorAccount(@PathVariable String id) {
         try {
             return ResponseEntity.ok(adminService.deactivateInstructorAccount(id));
@@ -102,7 +98,7 @@ public class AdminController {
         } catch (CustomException e) {
             return new ResponseEntity<>(HttpStatus.valueOf(e.getExceptionId()));
         }
-    }
+//    }
 //    @Autowired
 //    BCryptPasswordEncoder encoder;
 //    @Autowired
@@ -119,6 +115,6 @@ public class AdminController {
 //        admin.setPassword(encoder.encode("admin1234"));
 //        admin.setRole(roleRepository.findByName(ERole.ROLE_ADMIN).get());
 //        adminRepository.save(admin);
-// }
+ }
 
 }

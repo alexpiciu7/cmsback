@@ -2,12 +2,17 @@ package com.project.cms.controller;
 
 import com.project.cms.model.*;
 import com.project.cms.payload.request.CourseRegister;
+import com.project.cms.payload.response.CourseResponse;
+import com.project.cms.payload.response.StudentResponse;
 import com.project.cms.repository.PendingCourseEnrollmentRepository;
-import com.project.cms.service.*;
+import com.project.cms.service.CourseService;
+import com.project.cms.service.InstructorService;
+import com.project.cms.service.NoteService;
+import com.project.cms.service.StudentService;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -175,17 +180,32 @@ public class InstructorController {
             return ResponseEntity.notFound().build();
         pendingCourseEnrollmentRepository.delete(pendingCourseEnrollment.get());
         return ResponseEntity.ok().build();
-
-
     }
 
-        @GetMapping("{email}/course/enrolment")
+    @GetMapping("{email}/course/enrolment")
     public ResponseEntity<?> getPendingEnrollment(@PathVariable String email) {
         Optional<Instructor> instructor = instructorService.findOne(email);
         if (instructor.isEmpty())
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         List<String> courseIds = instructor.get().getCourses().stream().map(Course::getId).collect(Collectors.toList());
         return ResponseEntity.ok(pendingCourseEnrollmentRepository.findAllWithIdIn(courseIds));
+    }
+
+    @GetMapping("{email}/get/courses")
+    public ResponseEntity<?> getCourses(@PathVariable String email) {
+        Optional<Instructor> instructor = instructorService.findOne(email);
+        if (instructor.isEmpty())
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return ResponseEntity.ok(instructor.get().getCourses().stream().map(x->mapper.map(x, CourseResponse.class)));
+    }
+
+    @GetMapping("{InstrEmail}/get/students/{courseId}")
+    public ResponseEntity<?> getCourses(@PathVariable String instrEmail, @PathVariable String courseId) {
+        Optional<Instructor> instructor = instructorService.findOne(instrEmail);
+        Optional<Course> course = courseService.findOne(courseId);
+        if (instructor.isEmpty()||course.isEmpty())
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return ResponseEntity.ok(course.get().getStudents().stream().map(x->mapper.map(x, StudentResponse.class)).collect(Collectors.toList()));
     }
 
 }

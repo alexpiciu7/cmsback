@@ -10,9 +10,7 @@ import java.util.Optional;
 
 public interface IStudentService {
     Student register(StudentRegister studentRegister, MultipartFile cv) throws Exception;
-    Student save(Student student);
     Optional<Student> findOne(String id);
-    List<Student> findAll();
     PendingCourseEnrollment enrollCourse(PendingCourseEnrollment courseEnrollment);
 
 
