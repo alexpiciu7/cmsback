@@ -11,10 +11,11 @@ import java.util.Optional;
 @Service
 public class InstructorService implements IInstructorService {
 
+    private final InstructorRepository instructorRepository;
     @Autowired
-    private StudentRepository studentRepository;
-    @Autowired
-    private InstructorRepository instructorRepository;
+    public InstructorService(InstructorRepository instructorRepository) {
+        this.instructorRepository = instructorRepository;
+    }
 
     @Override
     public Optional<Instructor> findOne(String id) {

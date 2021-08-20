@@ -38,7 +38,7 @@ public class AuthService implements IAuthService {
         try {
             String username = loginRequest.getEmail();
             Authentication au = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, loginRequest.getPassword()));
-            String token = jwtUtils.generateJwtToken(username, roleRepository.findByName(ERole.valueOf(au.getAuthorities().stream().findFirst().get().toString())).get());
+            String token = jwtUtils.generateJwtToken(au);
             Map<Object, Object> model = new HashMap<>();
             model.put("email", username);
             model.put("roles", roleRepository.findByName(ERole.valueOf(au.getAuthorities().stream().findFirst().get().toString())).get().getName());

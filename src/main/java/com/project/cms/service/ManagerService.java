@@ -12,16 +12,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 @Service
-public class ManagerService implements IManagerService{
+public class ManagerService implements IManagerService {
+    private final StudentRepository studentRepository;
+    private final CourseRepository courseRepository;
+    private final InstructorRepository instructorRepository;
+    private final ManagerRepository managerRepository;
+
     @Autowired
-    private StudentRepository studentRepository;
-    @Autowired
-    private CourseRepository courseRepository;
-    @Autowired
-    private InstructorRepository instructorRepository;
-    @Autowired
-    private ManagerRepository managerRepository;
+    public ManagerService(StudentRepository studentRepository, CourseRepository courseRepository, InstructorRepository instructorRepository, ManagerRepository managerRepository) {
+        this.studentRepository = studentRepository;
+        this.courseRepository = courseRepository;
+        this.instructorRepository = instructorRepository;
+        this.managerRepository = managerRepository;
+    }
 
     @Override
     public List<Student> getAllStudents() {

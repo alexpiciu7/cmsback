@@ -5,7 +5,6 @@ import com.project.cms.model.Student;
 import com.project.cms.payload.request.StudentRegister;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface IStudentService {
