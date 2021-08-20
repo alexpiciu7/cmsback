@@ -13,8 +13,6 @@ import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,6 +40,7 @@ public class StudentController {
         this.mapper = mapper;
     }
 
+    //DONE
     @Transactional
     @RequestMapping(value = "/register", method = RequestMethod.POST, consumes = {"multipart/form-data"}, produces =
             "application/json")
@@ -53,7 +52,7 @@ public class StudentController {
             return ResponseEntity.badRequest().body(e.getCause());
         }
     }
-
+    //DONE
     @GetMapping("/course/all")
     public ResponseEntity<?> getAllCourses() {
         return ResponseEntity.ok(courseService.getAll().stream()
@@ -71,12 +70,9 @@ public class StudentController {
         courseResponse.setTimetable(course.get().getTimetable());
         return ResponseEntity.ok(courseResponse);
     }
-
+    //DONE??
     @PostMapping("/{email}/course/{id}/enroll")
     public ResponseEntity<?> enrollCourse(@PathVariable String email, @PathVariable String id) {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof AnonymousAuthenticationToken)
-            return ResponseEntity.badRequest().body("You must be logged!");
         Optional<Course> course = courseService.findOne(id);
         Optional<Student> student = studentService.findOne(email);
         if (course.isEmpty() || student.isEmpty())
@@ -106,7 +102,7 @@ public class StudentController {
             return ResponseEntity.notFound().build();
         return ResponseEntity.ok(course.get().getPost());
     }
-
+    //DONE
     @PutMapping("/{email}/cv")
     public ResponseEntity<?> updateCv(@PathVariable String email, @RequestBody MultipartFile cv) throws IOException {
         if (cv == null)
@@ -117,7 +113,7 @@ public class StudentController {
         student.get().setCv(Base64.getEncoder().encodeToString(cv.getBytes()));
         return ResponseEntity.ok().build();
     }
-
+    //DONE
     @GetMapping("/{email}")
     public ResponseEntity<?> getDetails(@PathVariable String email) {
         Optional<Student> student = studentService.findOne(email);

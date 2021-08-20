@@ -26,22 +26,22 @@ public class ManagerController {
         this.managerService = managerService;
         this.mapper = mapper;
     }
-
+    //DONE
     @GetMapping("/get/instructors")
     public ResponseEntity<?> allInstructors() {
         return ResponseEntity.ok(managerService.getAllInstructors().stream().map(x->mapper.map(x, InstructorResponse.class)).collect(Collectors.toList()));
     }
-
+    //DONE
     @GetMapping("/get/managers")
     public ResponseEntity<?> allManagers() {
         return ResponseEntity.ok(managerService.getAllManagers().stream().map(x->mapper.map(x, ManagerResponse.class)).collect(Collectors.toList()));
     }
-
+    //DONE
     @GetMapping("/get/students")
     public ResponseEntity<?> allStudents() {
         return ResponseEntity.ok(managerService.getAllStudents().stream().map(x->mapper.map(x, StudentResponse.class)).collect(Collectors.toList()));
     }
-
+    //DONE
     @GetMapping("/get/courses")
     public ResponseEntity<?> allCourses() {
         return ResponseEntity.ok(managerService.getAllCourses());

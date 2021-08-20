@@ -46,7 +46,7 @@ public class InstructorController {
         this.mapper = mapper;
         this.pendingCourseEnrollmentRepository = pendingCourseEnrollmentRepository;
     }
-
+    //DONE
     @PostMapping("{email}/add/course")
 //    @PreAuthorize("hasRole('INSTRUCTOR')")
     public ResponseEntity<?> addCourse(@PathVariable String email, @ModelAttribute CourseRegister courseRegister) {
@@ -203,9 +203,11 @@ public class InstructorController {
     public ResponseEntity<?> getCourses(@PathVariable String instrEmail, @PathVariable String courseId) {
         Optional<Instructor> instructor = instructorService.findOne(instrEmail);
         Optional<Course> course = courseService.findOne(courseId);
-        if (instructor.isEmpty()||course.isEmpty())
+        if (instructor.isEmpty()||course.isEmpty()||!instructor.get().getCourses().contains(course.get()))
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        return ResponseEntity.ok(course.get().getStudents().stream().map(x->mapper.map(x, StudentResponse.class)).collect(Collectors.toList()));
+        return ResponseEntity.ok(course.get().getStudents().stream()
+                .map(x->mapper.map(x, StudentResponse.class))
+                .collect(Collectors.toList()));
     }
 
 }

@@ -19,9 +19,13 @@ import static org.springframework.http.ResponseEntity.ok;
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 @RequestMapping("/api/auth")
 public class AuthController {
+    private final IAuthService authService;
     @Autowired
-    private IAuthService authService;
+    public AuthController(IAuthService authService) {
+        this.authService = authService;
+    }
 
+    //DONE
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         try {
@@ -30,7 +34,7 @@ public class AuthController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
+    //DONE
     @PostMapping("/logout")
     @PreAuthorize("hasRole('STUDENT') or hasRole('MANAGER') or hasRole('ADMIN') or hasRole('INSTRUCTOR') ")
     public ResponseEntity<?> logoutUser() {
