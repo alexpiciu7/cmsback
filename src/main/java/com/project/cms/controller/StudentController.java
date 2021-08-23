@@ -79,8 +79,8 @@ public class StudentController {
             return ResponseEntity.notFound().build();
         if (!course.get().isActive())
             return ResponseEntity.badRequest().body("Course is not active!");
-        if (!(course.get().getRegisterDuration().getStartDate().after(new Date()) && course.get().getRegisterDuration().getEndDate().before(new Date())))
-            return ResponseEntity.badRequest().body("Wrong date!");
+//        if (!(course.get().getRegisterDuration().getStartDate().after(new Date()) && course.get().getRegisterDuration().getEndDate().before(new Date())))
+//            return ResponseEntity.badRequest().body("Wrong date!");
         PendingCourseEnrollment enroll = new PendingCourseEnrollment(id, course.get().getName(), email, student.get().getLName() + " " + student.get().getFName());
         return ResponseEntity.ok(studentService.enrollCourse(enroll));
 

@@ -46,6 +46,7 @@ public class InstructorController {
         this.mapper = mapper;
         this.pendingCourseEnrollmentRepository = pendingCourseEnrollmentRepository;
     }
+
     //DONE
     @PostMapping("{email}/add/course")
 //    @PreAuthorize("hasRole('INSTRUCTOR')")
@@ -71,6 +72,7 @@ public class InstructorController {
         }
     }
 
+    //Done
     @PutMapping("/deactivate/course/{id}")
     public ResponseEntity<?> deactivateCourse(@PathVariable String id) {
         Optional<Course> course = courseService.findOne(id);
@@ -80,6 +82,7 @@ public class InstructorController {
         return ResponseEntity.ok(courseService.save(course.get()));
     }
 
+    //Done
     @PutMapping("/activate/course/{id}")
     public ResponseEntity<?> activateCourse(@PathVariable String id) {
         Optional<Course> course = courseService.findOne(id);
@@ -124,6 +127,7 @@ public class InstructorController {
         return ResponseEntity.ok().body(student.get().getCv());
     }
 
+    //Done
     @PutMapping("/course/{id}/post")
     public ResponseEntity<?> post(@PathVariable String id, @RequestBody String post) {
         Optional<Course> course = courseService.findOne(id);
@@ -191,22 +195,23 @@ public class InstructorController {
         return ResponseEntity.ok(pendingCourseEnrollmentRepository.findAllWithIdIn(courseIds));
     }
 
+    //Done
     @GetMapping("{email}/get/courses")
     public ResponseEntity<?> getCourses(@PathVariable String email) {
         Optional<Instructor> instructor = instructorService.findOne(email);
         if (instructor.isEmpty())
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        return ResponseEntity.ok(instructor.get().getCourses().stream().map(x->mapper.map(x, CourseResponse.class)));
+        return ResponseEntity.ok(instructor.get().getCourses().stream().map(CourseResponse::new).collect(Collectors.toList()));
     }
 
     @GetMapping("{InstrEmail}/get/students/{courseId}")
     public ResponseEntity<?> getCourses(@PathVariable String instrEmail, @PathVariable String courseId) {
         Optional<Instructor> instructor = instructorService.findOne(instrEmail);
         Optional<Course> course = courseService.findOne(courseId);
-        if (instructor.isEmpty()||course.isEmpty()||!instructor.get().getCourses().contains(course.get()))
+        if (instructor.isEmpty() || course.isEmpty() || !instructor.get().getCourses().contains(course.get()))
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         return ResponseEntity.ok(course.get().getStudents().stream()
-                .map(x->mapper.map(x, StudentResponse.class))
+                .map(x -> mapper.map(x, StudentResponse.class))
                 .collect(Collectors.toList()));
     }
 
