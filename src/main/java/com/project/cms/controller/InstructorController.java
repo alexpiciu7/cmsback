@@ -204,7 +204,7 @@ public class InstructorController {
         return ResponseEntity.ok(instructor.get().getCourses().stream().map(CourseResponse::new).collect(Collectors.toList()));
     }
 
-    @GetMapping("{InstrEmail}/get/students/{courseId}")
+    @GetMapping("{instrEmail}/get/students/{courseId}")
     public ResponseEntity<?> getCourses(@PathVariable String instrEmail, @PathVariable String courseId) {
         Optional<Instructor> instructor = instructorService.findOne(instrEmail);
         Optional<Course> course = courseService.findOne(courseId);
