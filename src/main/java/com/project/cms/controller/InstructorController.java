@@ -12,6 +12,7 @@ import com.project.cms.service.StudentService;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -119,7 +120,7 @@ public class InstructorController {
         return ResponseEntity.ok(courseService.save(course.get()));
     }
 
-    @GetMapping("/student/{email}/cv")
+    @GetMapping(value = "/student/{email}/cv", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<?> cvStudent(@PathVariable String email) {
         Optional<Student> student = studentService.findOne(email);
         if (student.isEmpty())

@@ -59,4 +59,9 @@ public class StudentService implements IStudentService {
         return pendingCourseEnrollmentRepository.save(courseEnrollment);
     }
 
+    @Override
+    public Student save(Student student) {
+        return studentRepository.save(student);
+    }
+
 }

@@ -11,6 +11,7 @@ public interface IStudentService {
     Student register(StudentRegister studentRegister, MultipartFile cv) throws Exception;
     Optional<Student> findOne(String id);
     PendingCourseEnrollment enrollCourse(PendingCourseEnrollment courseEnrollment);
+    Student save(Student student);
 
 
 }

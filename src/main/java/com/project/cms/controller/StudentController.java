@@ -110,8 +110,10 @@ public class StudentController {
         Optional<Student> student = studentService.findOne(email);
         if (student.isEmpty())
             return ResponseEntity.notFound().build();
-        student.get().setCv(Base64.getEncoder().encodeToString(cv.getBytes()));
-        return ResponseEntity.ok().build();
+        byte[] encodedBytes = Base64.getEncoder().encode(cv.getBytes());
+        String encodedString =  new String(encodedBytes);
+        student.get().setCv(encodedString);
+        return ResponseEntity.ok(studentService.save(student.get()));
     }
     //DONE
     @GetMapping("/{email}")
