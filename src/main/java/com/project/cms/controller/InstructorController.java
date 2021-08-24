@@ -108,7 +108,7 @@ public class InstructorController {
         if (course.isEmpty())
             return ResponseEntity.notFound().build();
         course.get().setTimetable(Base64.getEncoder().encodeToString(timetable.getBytes()));
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(courseService.save(course.get()));
     }
 
     @PutMapping("/course/{id}/update")
@@ -153,6 +153,7 @@ public class InstructorController {
 
     }
 
+    //DONE
     @PutMapping("/course/{courseId}/enroll/{email}")
     public ResponseEntity<?> addStudentAtCourse(@PathVariable String courseId, @PathVariable String email) {
         Optional<Course> course = courseService.findOne(courseId);
@@ -172,6 +173,7 @@ public class InstructorController {
         return ResponseEntity.badRequest().build();
     }
 
+    //DONE
     @DeleteMapping("/course/{courseId}/enroll/{email}")
     public ResponseEntity<?> rejectStudentFromCourse(@PathVariable String courseId, @PathVariable String email) {
         Optional<Course> course = courseService.findOne(courseId);
@@ -187,6 +189,7 @@ public class InstructorController {
         return ResponseEntity.ok().build();
     }
 
+    //DONE
     @GetMapping("{email}/course/enrolment")
     public ResponseEntity<?> getPendingEnrollment(@PathVariable String email) {
         Optional<Instructor> instructor = instructorService.findOne(email);
