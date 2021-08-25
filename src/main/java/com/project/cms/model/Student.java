@@ -29,7 +29,7 @@ public class Student extends User {
         setPassword(password);
         setUniversity(studentRegister.getUniversity());
         setYear(studentRegister.getYear());
-        setCv(Base64.getEncoder().encodeToString(cv.getBytes()));
+        setCv(cv);
         setRole(userRole);
     }
     @Override

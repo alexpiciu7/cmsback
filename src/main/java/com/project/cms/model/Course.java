@@ -65,7 +65,6 @@ public class Course {
         setCountry(courseRegister.getCountry());
         setDescription(courseRegister.getDescription());
         setCapacity(courseRegister.getCapacity());
-
     }
 
 

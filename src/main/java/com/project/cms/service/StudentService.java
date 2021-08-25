@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Optional;
 
 @Service
@@ -41,7 +42,7 @@ public class StudentService implements IStudentService {
         if (cv == null)
             throw new Exception("CV is Empty");
         Role userRole = roleRepository.findByName(ERole.ROLE_STUDENT).orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-        Student student = new Student(studentRegister, Arrays.toString(cv.getBytes()), encoder.encode(studentRegister.getPassword()), userRole);
+        Student student = new Student(studentRegister, Base64.getEncoder().encodeToString(cv.getBytes()), encoder.encode(studentRegister.getPassword()), userRole);
         student = studentRepository.save(student);
         return student;
     }

@@ -212,7 +212,7 @@ public class InstructorController {
     public ResponseEntity<?> getCourses(@PathVariable String instrEmail, @PathVariable String courseId) {
         Optional<Instructor> instructor = instructorService.findOne(instrEmail);
         Optional<Course> course = courseService.findOne(courseId);
-        if (instructor.isEmpty() || course.isEmpty() || !instructor.get().getCourses().contains(course.get()))
+        if (instructor.isEmpty() || course.isEmpty())
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         return ResponseEntity.ok(course.get().getStudents().stream()
                 .map(x -> mapper.map(x, StudentResponse.class))
