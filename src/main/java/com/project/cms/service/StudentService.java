@@ -13,7 +13,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Optional;
 
@@ -57,7 +56,9 @@ public class StudentService implements IStudentService {
 
     @Override
     public PendingCourseEnrollment enrollCourse(PendingCourseEnrollment courseEnrollment) {
-        return pendingCourseEnrollmentRepository.save(courseEnrollment);
+        if (pendingCourseEnrollmentRepository.findByCourseIdAndStudentEmail(courseEnrollment.getCourseId(), courseEnrollment.getStudentEmail()).isEmpty())
+            return pendingCourseEnrollmentRepository.save(courseEnrollment);
+        return null;
     }
 
     @Override

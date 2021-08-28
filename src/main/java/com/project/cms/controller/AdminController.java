@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200",maxAge = 3600)
+@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 @RequestMapping("/admin")
 public class AdminController {
     private final IAdminService adminService;
@@ -22,16 +22,18 @@ public class AdminController {
     public AdminController(IAdminService adminService) {
         this.adminService = adminService;
     }
+
     //DONE
     @PostMapping("/register/instructor")
     //@PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> registerInstructor(@RequestBody InstructorRegister instructorRegister) {
         try {
-           return ResponseEntity.ok(adminService.registerInstructor(instructorRegister));
+            return ResponseEntity.ok(adminService.registerInstructor(instructorRegister));
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
     //DONE
     @PostMapping("/register/manager")
     @PreAuthorize("hasRole('ADMIN')")
@@ -42,6 +44,7 @@ public class AdminController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
     //DONE
     @PutMapping("/activate/manager/{email}")
     @PreAuthorize("hasRole('ADMIN')")
@@ -53,33 +56,37 @@ public class AdminController {
             return new ResponseEntity<>(HttpStatus.valueOf(e.getExceptionId()));
         }
     }
+
     //DONE
     @PutMapping("/activate/instructor/{email}")
     public ResponseEntity<?> activateInstructorAccount(@PathVariable String email) {
         try {
-        return ResponseEntity.ok(adminService.activateInstructorAccount(email));
+            return ResponseEntity.ok(adminService.activateInstructorAccount(email));
         } catch (CustomException e) {
             return new ResponseEntity<>(HttpStatus.valueOf(e.getExceptionId()));
         }
     }
+
     //DONE
     @PutMapping("/activate/student/{email}")
     public ResponseEntity<?> activateStudentAccount(@PathVariable String email) {
         try {
-           return ResponseEntity.ok(adminService.activateStudentAccount(email));
+            return ResponseEntity.ok(adminService.activateStudentAccount(email));
         } catch (CustomException e) {
             return new ResponseEntity<>(HttpStatus.valueOf(e.getExceptionId()));
         }
     }
+
     //DONE
     @PutMapping("/deactivate/manager/{id}")
     public ResponseEntity<?> deactivateManagerAccount(@PathVariable String email) {
         try {
-           return ResponseEntity.ok(adminService.deactivateManagerAccount(email));
+            return ResponseEntity.ok(adminService.deactivateManagerAccount(email));
         } catch (CustomException e) {
             return new ResponseEntity<>(HttpStatus.valueOf(e.getExceptionId()));
         }
     }
+
     //DONE
     @PutMapping("/deactivate/instructor/{id}")
     public ResponseEntity<?> deactivateInstructorAccount(@PathVariable String id) {
@@ -89,12 +96,13 @@ public class AdminController {
             return new ResponseEntity<>(HttpStatus.valueOf(e.getExceptionId()));
         }
     }
+
     //DONE
     @PutMapping("/deactivate/student/{email}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deactivateStudentAccount(@PathVariable String email) {
         try {
-           return ResponseEntity.ok(adminService.deactivateStudentAccount(email));
+            return ResponseEntity.ok(adminService.deactivateStudentAccount(email));
         } catch (CustomException e) {
             return new ResponseEntity<>(HttpStatus.valueOf(e.getExceptionId()));
         }
@@ -115,6 +123,6 @@ public class AdminController {
 //        admin.setPassword(encoder.encode("admin1234"));
 //        admin.setRole(roleRepository.findByName(ERole.ROLE_ADMIN).get());
 //        adminRepository.save(admin);
- }
+    }
 
 }

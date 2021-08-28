@@ -21,7 +21,6 @@ import java.util.Map;
 public class AuthService implements IAuthService {
     private final AuthenticationManager authenticationManager;
     private final RoleRepository roleRepository;
-    private final BCryptPasswordEncoder encoder;
     private final JwtUtils jwtUtils;
 
     @Autowired
@@ -29,7 +28,6 @@ public class AuthService implements IAuthService {
                        BCryptPasswordEncoder encoder, JwtUtils jwtUtils) {
         this.authenticationManager = authenticationManager;
         this.roleRepository = roleRepository;
-        this.encoder = encoder;
         this.jwtUtils = jwtUtils;
     }
 

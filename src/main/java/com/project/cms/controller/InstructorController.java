@@ -20,7 +20,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.Positive;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
@@ -93,15 +92,6 @@ public class InstructorController {
         return ResponseEntity.ok(courseService.save(course.get()));
     }
 
-    @PutMapping("/course/{id}/capacity")
-    public ResponseEntity<?> capacity(@PathVariable String id, @RequestBody @Positive int capacity) {
-        Optional<Course> course = courseService.findOne(id);
-        if (course.isEmpty())
-            return ResponseEntity.notFound().build();
-        course.get().setCapacity(capacity);
-        return ResponseEntity.ok(courseService.save(course.get()));
-    }
-
     @PutMapping("/course/{id}/timetable")
     public ResponseEntity<?> timetable(@PathVariable String id, @RequestBody MultipartFile timetable) throws IOException {
         Optional<Course> course = courseService.findOne(id);
@@ -112,7 +102,7 @@ public class InstructorController {
     }
 
     @PutMapping("/course/{id}/update")
-    public ResponseEntity<?> update(@PathVariable String id, @RequestBody CourseRegister courseRegister) {
+    public ResponseEntity<?> update(@PathVariable String id, @ModelAttribute CourseRegister courseRegister) throws IOException {
         Optional<Course> course = courseService.findOne(id);
         if (course.isEmpty())
             return ResponseEntity.notFound().build();
@@ -185,6 +175,7 @@ public class InstructorController {
         Optional<PendingCourseEnrollment> pendingCourseEnrollment = pendingCourseEnrollmentRepository.findByCourseIdAndStudentEmail(courseId, email);
         if (pendingCourseEnrollment.isEmpty())
             return ResponseEntity.notFound().build();
+        course.get().setCapacity(course.get().getCapacity()-1);
         pendingCourseEnrollmentRepository.delete(pendingCourseEnrollment.get());
         return ResponseEntity.ok().build();
     }
@@ -209,7 +200,7 @@ public class InstructorController {
     }
 
     @GetMapping("{instrEmail}/get/students/{courseId}")
-    public ResponseEntity<?> getCourses(@PathVariable String instrEmail, @PathVariable String courseId) {
+    public ResponseEntity<?> getStudentsForCourse(@PathVariable String instrEmail, @PathVariable String courseId) {
         Optional<Instructor> instructor = instructorService.findOne(instrEmail);
         Optional<Course> course = courseService.findOne(courseId);
         if (instructor.isEmpty() || course.isEmpty())

@@ -1,17 +1,18 @@
 package com.project.cms.controller;
 
-import com.project.cms.model.*;
+import com.project.cms.model.Course;
+import com.project.cms.model.Note;
+import com.project.cms.model.PendingCourseEnrollment;
+import com.project.cms.model.Student;
 import com.project.cms.payload.request.StudentRegister;
 import com.project.cms.payload.response.CourseDetailResponse;
 import com.project.cms.payload.response.CourseResponse;
-import com.project.cms.payload.response.NoteResponse;
 import com.project.cms.payload.response.StudentResponse;
 import com.project.cms.service.ICourseService;
 import com.project.cms.service.INoteService;
 import com.project.cms.service.IStudentService;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,10 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.net.http.HttpResponse;
-import java.nio.file.Path;
 import java.util.Base64;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -49,7 +47,6 @@ public class StudentController {
     @RequestMapping(value = "/register", method = RequestMethod.POST, consumes = {"multipart/form-data"}, produces =
             "application/json")
     public ResponseEntity<?> registerUser(@ModelAttribute StudentRegister studentRegister) {
-
         try {
             return ResponseEntity.ok(studentService.register(studentRegister, studentRegister.getCv()));
         } catch (Exception e) {
@@ -61,6 +58,7 @@ public class StudentController {
     @GetMapping("/course/all")
     public ResponseEntity<?> getAllCourses() {
         return ResponseEntity.ok(courseService.getAll().stream()
+                .filter(Course::isActive)
                 .map(CourseResponse::new)
                 .collect(Collectors.toList()));
     }
@@ -84,10 +82,17 @@ public class StudentController {
             return ResponseEntity.notFound().build();
         if (!course.get().isActive())
             return ResponseEntity.badRequest().body("Course is not active!");
+        if (course.get().getStudents().contains(student.get()))
+            return ResponseEntity.badRequest().body("You are already enrolled!");
+
+        System.out.println(course.get().getStudents().contains(student.get()));
 //        if (!(course.get().getRegisterDuration().getStartDate().after(new Date()) && course.get().getRegisterDuration().getEndDate().before(new Date())))
-//            return ResponseEntity.badRequest().body("Wrong date!");
+//                          return ResponseEntity.badRequest().body("Wrong date!");
         PendingCourseEnrollment enroll = new PendingCourseEnrollment(id, course.get().getName(), email, student.get().getLName() + " " + student.get().getFName());
-        return ResponseEntity.ok(studentService.enrollCourse(enroll));
+        enroll = studentService.enrollCourse(enroll);
+        if (enroll == null)
+            return ResponseEntity.badRequest().body("You are already on pending list");
+        return ResponseEntity.ok(enroll);
 
     }
 
@@ -146,7 +151,7 @@ public class StudentController {
     }
 
     @GetMapping("/{email}/course/{id}/notes")
-    public ResponseEntity<?> getMyCourses(@PathVariable String email,@PathVariable String id) {
+    public ResponseEntity<?> getMyCourses(@PathVariable String email, @PathVariable String id) {
         return ResponseEntity.ok(noteService.getAllNotes(id, email).stream().map(Note::getNote).collect(Collectors.toList()));
 
     }

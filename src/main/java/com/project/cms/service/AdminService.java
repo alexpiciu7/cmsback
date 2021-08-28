@@ -42,8 +42,8 @@ public class AdminService implements IAdminService {
         Manager manager = mapper.map(managerRegister, Manager.class);
         manager.setPassword(encoder.encode(manager.getPassword()));
         manager.setRole(roleRepository.findByName(ERole.ROLE_MANAGER).get());
-        manager = managerRepository.save(manager);
-        return manager;
+        return managerRepository.save(manager);
+
     }
 
     @Override
@@ -51,8 +51,7 @@ public class AdminService implements IAdminService {
         Instructor instructor = mapper.map(instructorRegister, Instructor.class);
         instructor.setPassword(encoder.encode(instructor.getPassword()));
         instructor.setRole(roleRepository.findByName(ERole.ROLE_INSTRUCTOR).get());
-        instructor = instructorRepository.save(instructor);
-        return instructor;
+        return instructorRepository.save(instructor);
     }
 
     @Override

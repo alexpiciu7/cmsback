@@ -1,6 +1,7 @@
 package com.project.cms.model;
 
 import com.project.cms.payload.request.StudentRegister;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode
 @Document(collection = "students")
 public class Student extends User {
     private String fName;
@@ -31,17 +33,5 @@ public class Student extends User {
         setYear(studentRegister.getYear());
         setCv(cv);
         setRole(userRole);
-    }
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Student student = (Student) o;
-        return year == student.year && fName.equals(student.fName) && lName.equals(student.lName) && phone.equals(student.phone) && university.equals(student.university) && cv.equals(student.cv);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(fName, lName, phone, university, year, cv);
     }
 }
