@@ -42,8 +42,8 @@ public class AdminService implements IAdminService {
         Manager manager = mapper.map(managerRegister, Manager.class);
         manager.setPassword(encoder.encode(manager.getPassword()));
         manager.setRole(roleRepository.findByName(ERole.ROLE_MANAGER).get());
-        manager = managerRepository.save(manager);
-        return manager;
+        return managerRepository.save(manager);
+
     }
 
     @Override
@@ -51,13 +51,12 @@ public class AdminService implements IAdminService {
         Instructor instructor = mapper.map(instructorRegister, Instructor.class);
         instructor.setPassword(encoder.encode(instructor.getPassword()));
         instructor.setRole(roleRepository.findByName(ERole.ROLE_INSTRUCTOR).get());
-        instructor = instructorRepository.save(instructor);
-        return instructor;
+        return instructorRepository.save(instructor);
     }
 
     @Override
     public boolean activateManagerAccount(String id) throws CustomException {
-        Optional<Manager> manager = managerRepository.findById(id);
+        Optional<Manager> manager = Optional.ofNullable(managerRepository.findByEmail(id));
         if (manager.isEmpty()) {
             throw new CustomException("Manager not found",404);
         }
@@ -70,7 +69,7 @@ public class AdminService implements IAdminService {
 
     @Override
     public boolean activateInstructorAccount(String id) throws CustomException {
-        Optional<Instructor>  instructor = instructorRepository.findById(id);
+        Optional<Instructor>  instructor = Optional.ofNullable(instructorRepository.findByEmail(id));
         if (instructor.isEmpty()) {
             throw new CustomException("Instructor not found",404);
 
@@ -84,10 +83,9 @@ public class AdminService implements IAdminService {
 
     @Override
     public boolean activateStudentAccount(String id) throws CustomException {
-        Optional<Student>  student = studentRepository.findById(id);
+        Optional<Student>  student = Optional.ofNullable(studentRepository.findByEmail(id));
         if (student.isEmpty()) {
             throw new CustomException("Student not found",404);
-
         }
         Student student1 = student.get();
         if (student1.isActive()) return false;
@@ -99,7 +97,7 @@ public class AdminService implements IAdminService {
     @Override
     public boolean deactivateManagerAccount(String id) throws CustomException {
 
-        Optional<Manager> manager = managerRepository.findById(id);
+        Optional<Manager> manager = Optional.ofNullable(managerRepository.findByEmail(id));
         if (manager.isEmpty()) {
             throw new CustomException("Manager not found",404);
 
@@ -113,7 +111,7 @@ public class AdminService implements IAdminService {
 
     @Override
     public boolean deactivateInstructorAccount(String id) throws CustomException {
-        Optional<Instructor>  instructor = instructorRepository.findById(id);
+        Optional<Instructor>  instructor = Optional.ofNullable(instructorRepository.findByEmail(id));
         if (instructor.isEmpty()) {
             throw new CustomException("Instructor not found",404);
 
@@ -128,7 +126,7 @@ public class AdminService implements IAdminService {
 
     @Override
     public boolean deactivateStudentAccount(String id) throws CustomException {
-        Optional<Student>  student = studentRepository.findById(id);
+        Optional<Student>  student = Optional.ofNullable(studentRepository.findByEmail(id));
         if (student.isEmpty()) {
             throw new CustomException("Student not found",404);
 

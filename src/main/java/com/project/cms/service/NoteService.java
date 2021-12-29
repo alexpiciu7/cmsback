@@ -8,10 +8,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class NoteService implements INoteService{
-    @Autowired
+public class NoteService implements INoteService {
+
     private final NoteRepository noteRepository;
 
+    @Autowired
     public NoteService(NoteRepository noteRepository) {
         this.noteRepository = noteRepository;
     }
@@ -24,6 +25,6 @@ public class NoteService implements INoteService{
 
     @Override
     public List<Note> getAllNotes(String courseId, String studentEmail) {
-        return noteRepository.findByCourseIdAndStudentEmail(courseId,studentEmail);
+        return noteRepository.findByCourseIdAndStudentEmail(courseId, studentEmail);
     }
 }

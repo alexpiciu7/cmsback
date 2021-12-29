@@ -1,6 +1,9 @@
 package com.project.cms.service;
 
-import com.project.cms.model.*;
+import com.project.cms.model.ERole;
+import com.project.cms.model.PendingCourseEnrollment;
+import com.project.cms.model.Role;
+import com.project.cms.model.Student;
 import com.project.cms.payload.request.StudentRegister;
 import com.project.cms.repository.PendingCourseEnrollmentRepository;
 import com.project.cms.repository.RoleRepository;
@@ -11,11 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Base64;
-import java.util.List;
 import java.util.Optional;
 
 @Service
-public class StudentService implements IStudentService{
+public class StudentService implements IStudentService {
 
     private final StudentRepository studentRepository;
     private final BCryptPasswordEncoder encoder;
@@ -36,44 +38,32 @@ public class StudentService implements IStudentService{
         if (studentRepository.existsByEmail(studentRegister.getEmail()))
             throw new Exception("Email address already used");
 
-        if (cv==null)
+        if (cv == null)
             throw new Exception("CV is Empty");
-        Student student = new Student();
-        student.setFName(studentRegister.getFname());
-        student.setLName(studentRegister.getLname());
-        student.setPhone(studentRegister.getPhone());
-        student.setEmail(studentRegister.getEmail());
-        student.setPassword(encoder.encode(studentRegister.getPassword()));
-        student.setUniversity(studentRegister.getUniversity());
-        student.setYear(studentRegister.getYear());
-        student.setCv(Base64.getEncoder().encodeToString(cv.getBytes()));
         Role userRole = roleRepository.findByName(ERole.ROLE_STUDENT).orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-        student.setRole(userRole);
+        Student student = new Student(studentRegister, Base64.getEncoder().encodeToString(cv.getBytes()), encoder.encode(studentRegister.getPassword()), userRole);
         student = studentRepository.save(student);
         return student;
     }
 
     @Override
-    public Student save(Student student) {
-        return studentRepository.save(student);
-    }
-
-    @Override
     public Optional<Student> findOne(String id) {
-        if (studentRepository.findByEmail(id)==null)
+        if (studentRepository.findByEmail(id) == null)
             return Optional.empty();
         else
             return Optional.of(studentRepository.findByEmail(id));
     }
 
     @Override
-    public List<Student> findAll() {
-        return studentRepository.findAll();
+    public PendingCourseEnrollment enrollCourse(PendingCourseEnrollment courseEnrollment) {
+        if (pendingCourseEnrollmentRepository.findByCourseIdAndStudentEmail(courseEnrollment.getCourseId(), courseEnrollment.getStudentEmail()).isEmpty())
+            return pendingCourseEnrollmentRepository.save(courseEnrollment);
+        return null;
     }
 
     @Override
-    public PendingCourseEnrollment enrollCourse(PendingCourseEnrollment courseEnrollment) {
-        return pendingCourseEnrollmentRepository.save(courseEnrollment);
+    public Student save(Student student) {
+        return studentRepository.save(student);
     }
 
 }

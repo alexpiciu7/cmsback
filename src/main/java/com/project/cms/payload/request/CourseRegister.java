@@ -4,6 +4,7 @@ import com.project.cms.model.Duration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
@@ -21,10 +22,14 @@ public class CourseRegister {
     @NotBlank
     private String description;
     private MultipartFile image;
-    @NotNull
-    private Duration courseDuration;
-    @NotNull
-    private Duration registerDuration;
+    @NotBlank
+    private String courseStart;
+    @NotBlank
+    private String courseEnd;
+    @NotBlank
+    private String courseRegisterStart;
+    @NotBlank
+    private String courseRegisterEnd;
     @NotBlank
     private String country;
     @NotBlank

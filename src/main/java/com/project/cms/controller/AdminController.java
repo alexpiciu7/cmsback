@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200",maxAge = 3600)
+@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 @RequestMapping("/admin")
 public class AdminController {
     private final IAdminService adminService;
@@ -24,10 +24,10 @@ public class AdminController {
     }
 
     @PostMapping("/register/instructor")
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> registerInstructor(@RequestBody InstructorRegister instructorRegister) {
         try {
-           return ResponseEntity.ok(adminService.registerInstructor(instructorRegister));
+            return ResponseEntity.ok(adminService.registerInstructor(instructorRegister));
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -43,6 +43,7 @@ public class AdminController {
         }
     }
 
+
     @PutMapping("/activate/manager/{email}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> activateManagerAccount(@PathVariable String email) {
@@ -54,38 +55,35 @@ public class AdminController {
         }
     }
 
+
     @PutMapping("/activate/instructor/{email}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> activateInstructorAccount(@PathVariable String email) {
         try {
-        return ResponseEntity.ok(adminService.activateInstructorAccount(email));
+            return ResponseEntity.ok(adminService.activateInstructorAccount(email));
         } catch (CustomException e) {
             return new ResponseEntity<>(HttpStatus.valueOf(e.getExceptionId()));
         }
     }
 
     @PutMapping("/activate/student/{email}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> activateStudentAccount(@PathVariable String email) {
         try {
-           return ResponseEntity.ok(adminService.activateStudentAccount(email));
+            return ResponseEntity.ok(adminService.activateStudentAccount(email));
         } catch (CustomException e) {
             return new ResponseEntity<>(HttpStatus.valueOf(e.getExceptionId()));
         }
     }
 
     @PutMapping("/deactivate/manager/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deactivateManagerAccount(@PathVariable String email) {
         try {
-           return ResponseEntity.ok(adminService.deactivateManagerAccount(email));
+            return ResponseEntity.ok(adminService.deactivateManagerAccount(email));
         } catch (CustomException e) {
             return new ResponseEntity<>(HttpStatus.valueOf(e.getExceptionId()));
         }
     }
 
     @PutMapping("/deactivate/instructor/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deactivateInstructorAccount(@PathVariable String id) {
         try {
             return ResponseEntity.ok(adminService.deactivateInstructorAccount(id));
@@ -98,11 +96,11 @@ public class AdminController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deactivateStudentAccount(@PathVariable String email) {
         try {
-           return ResponseEntity.ok(adminService.deactivateStudentAccount(email));
+            return ResponseEntity.ok(adminService.deactivateStudentAccount(email));
         } catch (CustomException e) {
             return new ResponseEntity<>(HttpStatus.valueOf(e.getExceptionId()));
         }
-    }
+//    }
 //    @Autowired
 //    BCryptPasswordEncoder encoder;
 //    @Autowired
@@ -119,6 +117,6 @@ public class AdminController {
 //        admin.setPassword(encoder.encode("admin1234"));
 //        admin.setRole(roleRepository.findByName(ERole.ROLE_ADMIN).get());
 //        adminRepository.save(admin);
-// }
+    }
 
 }

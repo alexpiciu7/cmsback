@@ -19,8 +19,12 @@ import static org.springframework.http.ResponseEntity.ok;
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 @RequestMapping("/api/auth")
 public class AuthController {
+    private final IAuthService authService;
+
     @Autowired
-    private IAuthService authService;
+    public AuthController(IAuthService authService) {
+        this.authService = authService;
+    }
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {

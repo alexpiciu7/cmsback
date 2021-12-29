@@ -1,9 +1,7 @@
 package com.project.cms.security;
 
-
 import com.project.cms.security.jwt.AuthEntryPointJwt;
-import com.project.cms.security.jwt.JwtConfigurer;
-import com.project.cms.security.jwt.JwtUtils;
+import com.project.cms.security.jwt.AuthTokenFilter;
 import com.project.cms.service.UserDetailsServiceImpl;
 import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
@@ -17,11 +15,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import javax.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity
@@ -33,33 +29,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
 
-    @Autowired
-    private JwtUtils jwtTokenProvider;
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        UserDetailsService userDetailsService = mongoUserDetails();
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-
-    }
-
     @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
-
-    @Bean
-    public AuthenticationEntryPoint unauthorizedEntryPoint() {
-        return (request, response, authException) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                "Unauthorized");
+    public AuthTokenFilter authenticationJwtTokenFilter() {
+        return new AuthTokenFilter();
     }
     @Bean
     public Mapper mapper() {
@@ -67,34 +39,37 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
+    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+        authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder()
+    {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Override
     protected void configure(HttpSecurity http) throws Exception {
-
-
-        http.authorizeRequests()
-                .antMatchers("/").permitAll()
-                .antMatchers("/h2-console/**").permitAll();
-
-        http.csrf().disable();
-        http.headers().frameOptions().disable();
         http.cors().and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests().antMatchers("/api/auth/login").permitAll()
-                .antMatchers("/student/register").permitAll()
-                .antMatchers("/*").permitAll()
+                .authorizeRequests().
+                 antMatchers("/*").permitAll()
                 .antMatchers("/*/*").permitAll()
                 .antMatchers("/*/*/*").permitAll()
                 .antMatchers("/*/*/*/*").permitAll()
                 .antMatchers("/*/*/*/*/*").permitAll()
                 .antMatchers("/*/*/*/*/*/*").permitAll()
                 .antMatchers("/admin/add/admin").permitAll()
-                .anyRequest().authenticated().anyRequest().authenticated().and().csrf()
-                .disable().exceptionHandling().authenticationEntryPoint(unauthorizedEntryPoint()).and()
-                .apply(new JwtConfigurer(jwtTokenProvider));
-    }
+                .anyRequest().authenticated();
 
-    @Bean
-    public UserDetailsService mongoUserDetails() {
-        return new UserDetailsServiceImpl();
+        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 }

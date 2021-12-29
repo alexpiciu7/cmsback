@@ -2,19 +2,25 @@ package com.project.cms.controller;
 
 import com.project.cms.model.*;
 import com.project.cms.payload.request.CourseRegister;
+import com.project.cms.payload.response.CourseResponse;
+import com.project.cms.payload.response.StudentResponse;
 import com.project.cms.repository.PendingCourseEnrollmentRepository;
-import com.project.cms.service.*;
+import com.project.cms.service.CourseService;
+import com.project.cms.service.InstructorService;
+import com.project.cms.service.NoteService;
+import com.project.cms.service.StudentService;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.Positive;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
@@ -43,7 +49,7 @@ public class InstructorController {
     }
 
     @PostMapping("{email}/add/course")
-//    @PreAuthorize("hasRole('INSTRUCTOR')")
+    @PreAuthorize("hasRole('INSTRUCTOR')")
     public ResponseEntity<?> addCourse(@PathVariable String email, @ModelAttribute CourseRegister courseRegister) {
         try {
             Optional<Instructor> instructor = instructorService.findOne(email);
@@ -84,26 +90,17 @@ public class InstructorController {
         return ResponseEntity.ok(courseService.save(course.get()));
     }
 
-    @PutMapping("/course/{id}/capacity")
-    public ResponseEntity<?> capacity(@PathVariable String id, @RequestBody @Positive int capacity) {
-        Optional<Course> course = courseService.findOne(id);
-        if (course.isEmpty())
-            return ResponseEntity.notFound().build();
-        course.get().setCapacity(capacity);
-        return ResponseEntity.ok(courseService.save(course.get()));
-    }
-
     @PutMapping("/course/{id}/timetable")
     public ResponseEntity<?> timetable(@PathVariable String id, @RequestBody MultipartFile timetable) throws IOException {
         Optional<Course> course = courseService.findOne(id);
         if (course.isEmpty())
             return ResponseEntity.notFound().build();
         course.get().setTimetable(Base64.getEncoder().encodeToString(timetable.getBytes()));
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(courseService.save(course.get()));
     }
 
     @PutMapping("/course/{id}/update")
-    public ResponseEntity<?> update(@PathVariable String id, @RequestBody CourseRegister courseRegister) {
+    public ResponseEntity<?> update(@PathVariable String id, @ModelAttribute CourseRegister courseRegister) throws IOException {
         Optional<Course> course = courseService.findOne(id);
         if (course.isEmpty())
             return ResponseEntity.notFound().build();
@@ -111,7 +108,7 @@ public class InstructorController {
         return ResponseEntity.ok(courseService.save(course.get()));
     }
 
-    @GetMapping("/student/{email}/cv")
+    @GetMapping(value = "/student/{email}/cv", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<?> cvStudent(@PathVariable String email) {
         Optional<Student> student = studentService.findOne(email);
         if (student.isEmpty())
@@ -173,19 +170,37 @@ public class InstructorController {
         Optional<PendingCourseEnrollment> pendingCourseEnrollment = pendingCourseEnrollmentRepository.findByCourseIdAndStudentEmail(courseId, email);
         if (pendingCourseEnrollment.isEmpty())
             return ResponseEntity.notFound().build();
+        course.get().setCapacity(course.get().getCapacity()-1);
         pendingCourseEnrollmentRepository.delete(pendingCourseEnrollment.get());
         return ResponseEntity.ok().build();
-
-
     }
 
-        @GetMapping("{email}/course/enrolment")
+    @GetMapping("{email}/course/enrolment")
     public ResponseEntity<?> getPendingEnrollment(@PathVariable String email) {
         Optional<Instructor> instructor = instructorService.findOne(email);
         if (instructor.isEmpty())
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         List<String> courseIds = instructor.get().getCourses().stream().map(Course::getId).collect(Collectors.toList());
         return ResponseEntity.ok(pendingCourseEnrollmentRepository.findAllWithIdIn(courseIds));
+    }
+
+    @GetMapping("{email}/get/courses")
+    public ResponseEntity<?> getCourses(@PathVariable String email) {
+        Optional<Instructor> instructor = instructorService.findOne(email);
+        if (instructor.isEmpty())
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return ResponseEntity.ok(instructor.get().getCourses().stream().map(CourseResponse::new).collect(Collectors.toList()));
+    }
+
+    @GetMapping("{instrEmail}/get/students/{courseId}")
+    public ResponseEntity<?> getStudentsForCourse(@PathVariable String instrEmail, @PathVariable String courseId) {
+        Optional<Instructor> instructor = instructorService.findOne(instrEmail);
+        Optional<Course> course = courseService.findOne(courseId);
+        if (instructor.isEmpty() || course.isEmpty())
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return ResponseEntity.ok(course.get().getStudents().stream()
+                .map(x -> mapper.map(x, StudentResponse.class))
+                .collect(Collectors.toList()));
     }
 
 }
