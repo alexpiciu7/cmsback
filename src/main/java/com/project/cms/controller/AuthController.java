@@ -26,7 +26,6 @@ public class AuthController {
         this.authService = authService;
     }
 
-    //DONE
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         try {
@@ -36,7 +35,6 @@ public class AuthController {
         }
     }
 
-    //DONE
     @PostMapping("/logout")
     @PreAuthorize("hasRole('STUDENT') or hasRole('MANAGER') or hasRole('ADMIN') or hasRole('INSTRUCTOR') ")
     public ResponseEntity<?> logoutUser() {

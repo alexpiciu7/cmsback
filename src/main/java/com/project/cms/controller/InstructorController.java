@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -47,9 +48,8 @@ public class InstructorController {
         this.pendingCourseEnrollmentRepository = pendingCourseEnrollmentRepository;
     }
 
-    //DONE
     @PostMapping("{email}/add/course")
-//    @PreAuthorize("hasRole('INSTRUCTOR')")
+    @PreAuthorize("hasRole('INSTRUCTOR')")
     public ResponseEntity<?> addCourse(@PathVariable String email, @ModelAttribute CourseRegister courseRegister) {
         try {
             Optional<Instructor> instructor = instructorService.findOne(email);
@@ -72,7 +72,6 @@ public class InstructorController {
         }
     }
 
-    //Done
     @PutMapping("/deactivate/course/{id}")
     public ResponseEntity<?> deactivateCourse(@PathVariable String id) {
         Optional<Course> course = courseService.findOne(id);
@@ -82,7 +81,6 @@ public class InstructorController {
         return ResponseEntity.ok(courseService.save(course.get()));
     }
 
-    //Done
     @PutMapping("/activate/course/{id}")
     public ResponseEntity<?> activateCourse(@PathVariable String id) {
         Optional<Course> course = courseService.findOne(id);
@@ -118,7 +116,6 @@ public class InstructorController {
         return ResponseEntity.ok().body(student.get().getCv());
     }
 
-    //Done
     @PutMapping("/course/{id}/post")
     public ResponseEntity<?> post(@PathVariable String id, @RequestBody String post) {
         Optional<Course> course = courseService.findOne(id);
@@ -143,7 +140,6 @@ public class InstructorController {
 
     }
 
-    //DONE
     @PutMapping("/course/{courseId}/enroll/{email}")
     public ResponseEntity<?> addStudentAtCourse(@PathVariable String courseId, @PathVariable String email) {
         Optional<Course> course = courseService.findOne(courseId);
@@ -163,7 +159,6 @@ public class InstructorController {
         return ResponseEntity.badRequest().build();
     }
 
-    //DONE
     @DeleteMapping("/course/{courseId}/enroll/{email}")
     public ResponseEntity<?> rejectStudentFromCourse(@PathVariable String courseId, @PathVariable String email) {
         Optional<Course> course = courseService.findOne(courseId);
@@ -180,7 +175,6 @@ public class InstructorController {
         return ResponseEntity.ok().build();
     }
 
-    //DONE
     @GetMapping("{email}/course/enrolment")
     public ResponseEntity<?> getPendingEnrollment(@PathVariable String email) {
         Optional<Instructor> instructor = instructorService.findOne(email);
@@ -190,7 +184,6 @@ public class InstructorController {
         return ResponseEntity.ok(pendingCourseEnrollmentRepository.findAllWithIdIn(courseIds));
     }
 
-    //Done
     @GetMapping("{email}/get/courses")
     public ResponseEntity<?> getCourses(@PathVariable String email) {
         Optional<Instructor> instructor = instructorService.findOne(email);

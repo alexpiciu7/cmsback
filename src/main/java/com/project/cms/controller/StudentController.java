@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Date;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -42,7 +43,6 @@ public class StudentController {
         this.mapper = mapper;
     }
 
-    //DONE
     @Transactional
     @RequestMapping(value = "/register", method = RequestMethod.POST, consumes = {"multipart/form-data"}, produces =
             "application/json")
@@ -54,7 +54,6 @@ public class StudentController {
         }
     }
 
-    //DONE
     @GetMapping("/course/all")
     public ResponseEntity<?> getAllCourses() {
         return ResponseEntity.ok(courseService.getAll().stream()
@@ -73,7 +72,6 @@ public class StudentController {
         return ResponseEntity.ok(courseResponse);
     }
 
-    //DONE??
     @PostMapping("/{email}/course/{id}/enroll")
     public ResponseEntity<?> enrollCourse(@PathVariable String email, @PathVariable String id) {
         Optional<Course> course = courseService.findOne(id);
@@ -85,9 +83,8 @@ public class StudentController {
         if (course.get().getStudents().contains(student.get()))
             return ResponseEntity.badRequest().body("You are already enrolled!");
 
-        System.out.println(course.get().getStudents().contains(student.get()));
-//        if (!(course.get().getRegisterDuration().getStartDate().after(new Date()) && course.get().getRegisterDuration().getEndDate().before(new Date())))
-//                          return ResponseEntity.badRequest().body("Wrong date!");
+        if (!(course.get().getRegisterDuration().getStartDate().after(new Date()) && course.get().getRegisterDuration().getEndDate().before(new Date())))
+                          return ResponseEntity.badRequest().body("Wrong date!");
         PendingCourseEnrollment enroll = new PendingCourseEnrollment(id, course.get().getName(), email, student.get().getLName() + " " + student.get().getFName());
         enroll = studentService.enrollCourse(enroll);
         if (enroll == null)
@@ -113,7 +110,6 @@ public class StudentController {
         return ResponseEntity.ok(course.get().getPost());
     }
 
-    //DONE
     @PutMapping("/{email}/cv")
     public ResponseEntity<?> updateCv(@PathVariable String email, @RequestBody MultipartFile cv) throws IOException {
         if (cv == null)
@@ -127,7 +123,6 @@ public class StudentController {
         return ResponseEntity.ok(studentService.save(student.get()));
     }
 
-    //DONE
     @GetMapping("/{email}")
     public ResponseEntity<?> getDetails(@PathVariable String email) {
         Optional<Student> student = studentService.findOne(email);

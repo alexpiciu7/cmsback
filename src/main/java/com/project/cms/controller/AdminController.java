@@ -23,9 +23,8 @@ public class AdminController {
         this.adminService = adminService;
     }
 
-    //DONE
     @PostMapping("/register/instructor")
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> registerInstructor(@RequestBody InstructorRegister instructorRegister) {
         try {
             return ResponseEntity.ok(adminService.registerInstructor(instructorRegister));
@@ -34,7 +33,6 @@ public class AdminController {
         }
     }
 
-    //DONE
     @PostMapping("/register/manager")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> registerManager(@RequestBody @Valid ManagerRegister managerRegister) {
@@ -45,7 +43,7 @@ public class AdminController {
         }
     }
 
-    //DONE
+
     @PutMapping("/activate/manager/{email}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> activateManagerAccount(@PathVariable String email) {
@@ -57,7 +55,7 @@ public class AdminController {
         }
     }
 
-    //DONE
+
     @PutMapping("/activate/instructor/{email}")
     public ResponseEntity<?> activateInstructorAccount(@PathVariable String email) {
         try {
@@ -67,7 +65,6 @@ public class AdminController {
         }
     }
 
-    //DONE
     @PutMapping("/activate/student/{email}")
     public ResponseEntity<?> activateStudentAccount(@PathVariable String email) {
         try {
@@ -77,7 +74,6 @@ public class AdminController {
         }
     }
 
-    //DONE
     @PutMapping("/deactivate/manager/{id}")
     public ResponseEntity<?> deactivateManagerAccount(@PathVariable String email) {
         try {
@@ -87,7 +83,6 @@ public class AdminController {
         }
     }
 
-    //DONE
     @PutMapping("/deactivate/instructor/{id}")
     public ResponseEntity<?> deactivateInstructorAccount(@PathVariable String id) {
         try {
@@ -97,7 +92,6 @@ public class AdminController {
         }
     }
 
-    //DONE
     @PutMapping("/deactivate/student/{email}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deactivateStudentAccount(@PathVariable String email) {
