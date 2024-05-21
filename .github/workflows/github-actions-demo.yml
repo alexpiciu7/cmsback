@@ -21,7 +21,8 @@ jobs:
           output: 'trivy-results.sarif'
           severity: 'CRITICAL'
 
-      - name: Save Trivy scan results
-        run: |
-          echo "Trivy scan results are saved to trivy-results.sarif"
-          cat trivy-results.sarif
+      - name: Archive Trivy scan results
+        uses: actions/upload-artifact@v3
+        with:
+          name: trivy-results
+          path: trivy-results.sarif
